@@ -1,0 +1,23 @@
+<products>
+   <product>
+      <id>513</id>
+      <name>imperdiet</name>
+      <description>Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.</description>
+      <quantity>80</quantity>
+      <dateAdded>2013-02-09</dateAdded>
+   </product>
+   <product>
+      <id>685</id>
+      <name>sed magna at</name>
+      <description>Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.</description>
+      <quantity>55</quantity>
+      <dateAdded>2013-02-09</dateAdded>
+   </product>
+   <product>
+      <id>773</id>
+      <name>elit sodales scelerisque</name>
+      <description>Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.</description>
+      <quantity>75</quantity>
+      <dateAdded>2013-02-09</dateAdded>
+   </product>
+</products>

@@ -1,0 +1,9 @@
+<products>
+   <product>
+      <id>400</id>
+      <name>in</name>
+      <description>Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.</description>
+      <quantity>97</quantity>
+      <dateAdded>2014-01-17</dateAdded>
+   </product>
+</products>
