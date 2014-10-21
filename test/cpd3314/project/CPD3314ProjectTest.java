@@ -127,7 +127,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "noArg.xml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "noArg.xml").toFile();
         File result = new File("CPD3314.xml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
@@ -138,7 +138,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-format=XML"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "formatXML.xml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "formatXML.xml").toFile();
         File result = new File("CPD3314.xml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
@@ -149,7 +149,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-format=JSON"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "formatJSON.json").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "formatJSON.json").toFile();
         File result = new File("CPD3314.json");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertJSONFilesEqual(expected, result);
@@ -160,7 +160,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-format=YAML"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "formatYAML.yaml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "formatYAML.yaml").toFile();
         File result = new File("CPD3314.yaml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertYAMLFilesEqual(expected, result);
@@ -171,7 +171,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-format=SQL"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "formatSQL.sql").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "formatSQL.sql").toFile();
         File result = new File("CPD3314.sql");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertFilesEqual(expected, result);
@@ -182,7 +182,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-format=HTML"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "formatHTML.html").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "formatHTML.html").toFile();
         File result = new File("CPD3314.html");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
@@ -193,7 +193,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-o=test"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "noArg.xml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "noArg.xml").toFile();
         File result = new File("test.xml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
@@ -204,7 +204,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-o=ten", "-limit=10"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "limit10.xml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "limit10.xml").toFile();
         File result = new File("ten.xml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
@@ -215,7 +215,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-sort=A", "-o=a", "-limit=10"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "sortA.xml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "sortA.xml").toFile();
         File result = new File("a.xml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
@@ -226,7 +226,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-sort=I", "-o=i", "-limit=10"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "sortI.xml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "sortI.xml").toFile();
         File result = new File("i.xml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
@@ -237,7 +237,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-sort=D", "-o=d", "-limit=10"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "sortD.xml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "sortD.xml").toFile();
         File result = new File("d.xml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
@@ -248,7 +248,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-getID=400", "-o=fourHundred"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "get400.xml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "get400.xml").toFile();
         File result = new File("fourHundred.xml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
@@ -259,7 +259,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-getDate=2013-02-09", "-o=byDate"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "getDate.xml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "getDate.xml").toFile();
         File result = new File("byDate.xml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
@@ -270,7 +270,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-find=lorem", "-o=lorem"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "findOne.xml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "findOne.xml").toFile();
         File result = new File("lorem.xml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
@@ -281,7 +281,7 @@ public class CPD3314ProjectTest {
         System.out.println("main");
         String[] args = {"-find=dolor sit amet", "-o=dolor"};
         CPD3314Project.main(args);
-        File expected = FileSystems.getDefault().getPath("test", "findMulti.xml").toFile();
+        File expected = FileSystems.getDefault().getPath("testFiles", "findMulti.xml").toFile();
         File result = new File("dolor.xml");
         assertTrue("Output File Doesn't Exist", result.exists());
         assertXMLFilesEqual(expected, result);
