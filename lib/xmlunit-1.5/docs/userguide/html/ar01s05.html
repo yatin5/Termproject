@@ -1,0 +1,147 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>5. XPath Tests</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="XMLUnit Java User's Guide"><link rel="up" href="index.html" title="XMLUnit Java User's Guide"><link rel="prev" href="ar01s04.html" title="4. Validating XML Documents"><link rel="next" href="ar01s06.html" title="6. DOM Tree Walking"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">5. XPath Tests</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr></table><hr></div><div class="section" title="5. XPath Tests"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="XPath%20Tests"></a>5. XPath Tests</h2></div></div></div><div class="section" title="5.1. XPath Engines"><div class="titlepage"><div><div><h3 class="title"><a name="XPath%20Engines"></a>5.1. XPath Engines</h3></div></div></div><p>Central to XMLUnit's XPath support is the
+      <code class="literal">XpathEngine</code> interface which consists of only
+      three methods:</p><pre class="programlisting">
+    /**
+     * Execute the specified xpath syntax &lt;code&gt;select&lt;/code&gt; expression
+     * on the specified document and return the list of nodes (could have
+     * length zero) that match
+     * @param select
+     * @param document
+     * @return list of matching nodes
+     */
+    NodeList getMatchingNodes(String select, Document document)
+        throws XpathException;
+    
+    /**
+     * Evaluate the result of executing the specified XPath syntax
+     * &lt;code&gt;select&lt;/code&gt; expression on the specified document
+     * @param select
+     * @param document
+     * @return evaluated result
+     */
+    String evaluate(String select, Document document)
+        throws XpathException;
+
+    /**
+     * Establish a namespace context.
+     */
+    void setNamespaceContext(NamespaceContext ctx);
+</pre><p>The first two methods expect an XPath expression that
+      selects content from the DOM document that is the second
+      argument.  The result of the selection can be either a DOM
+      <code class="literal">NodeList</code> or a <code class="literal">String</code>.  The
+      later form tries to flatten the result, the value is said to be
+      "String-ified".</p><p>The third method is part of XMLUnit's support for XML
+      Namespaces in XPath expressions.  See <a class="xref" href="ar01s05.html#Using%20XML%20Namespaces%20in%20XPath%20Selectors" title="5.2. Using XML Namespaces in XPath Selectors">Section 5.2, &#8220;Using XML Namespaces in XPath Selectors&#8221;</a>
+      for more details.</p><p>There are two implementations of the interface,
+      <code class="literal">org.custommonkey.xmlunit.SimpleXpathEngine</code>
+      and
+      <code class="literal">org.custommonkey.xmlunit.jaxp13.Jaxp13XpathEngine</code>.
+      The first implementation is the only one available in XMLUnit
+      1.0 and uses the configured JAXP XSLT
+      transformer.  The second is new to XMLUnit 1.1 and only
+      available if JAXP 1.3 or later is supported, which should be the
+      case for Java 5 and later.</p><p><code class="literal">XpathException</code> is an
+      <code class="literal">Exception</code> that will be thrown for invalid
+      XPath expressions or other problems with the underlying XPath
+      engine.  It will typically wrap a
+      <code class="literal">javax.xml.xpath.XPathExpressionException</code> in
+      the <code class="literal">Jaxp13XpathEngine</code> case or a
+      <code class="literal">javax.xml.transform.TransformerException</code> when
+      <code class="literal">SimpleXpathEngine</code> is used.</p><p>The <code class="literal">XMLUnit.newXpathEngine</code> method will
+      first try to create an instance of
+      <code class="literal">Jaxp13XpathEngine</code> and fall back to
+      <code class="literal">SimpleXpathEngine</code> if JAXP 1.3 is not
+      supported.</p><p>One example of using the XPath support is included inside
+      it <code class="literal">org.custommonkey.xmlunit.examples</code> package.
+      It asserts that the string-ified form of an XPath selection
+      matches a regular expression.  The code needed for this
+      is:</p><div class="example"><a name="idp1733728"></a><p class="title"><b>Example 31. Matching an XPath Selection Against a Regular
+          Expression</b></p><div class="example-contents"><pre class="programlisting">
+    XpathEngine engine = XMLUnit.newXpathEngine();
+    String value = engine.evaluate(xpath, doc);
+    Assert.assertTrue(message, value.matches(regex));
+</pre></div></div><br class="example-break"></div><div class="section" title="5.2. Using XML Namespaces in XPath Selectors"><div class="titlepage"><div><div><h3 class="title"><a name="Using%20XML%20Namespaces%20in%20XPath%20Selectors"></a>5.2. Using XML Namespaces in XPath Selectors</h3></div></div></div><p>Starting with XMLUnit 1.1 XML Namespaces are supported for
+      XPath queries.</p><p>The <code class="literal">NamespaceContext</code> interface provides
+      a mapping from prefix to namespace URI and is used by the XPath
+      engine.  XPath selections then use the mapping's prefixes where
+      needed.  Note that a prefix used in the document under test and
+      a prefix given as part of the
+      <code class="literal">NamespaceContext</code> are not related at all; the
+      context only applies to the XPath expression, the prefix used in
+      the document is ignored completely.</p><p>Right now XMLUnit provides only a single implementation of
+      the <code class="literal">NamespaceContext</code> interface:
+      <code class="literal">SimpleNamespaceContext</code>.  This implementation
+      expects a <code class="literal">java.util.Map</code> as its constructor
+      argument.  The <code class="literal">Map</code> must contain
+      (<code class="literal">String</code>) prefixes as keys and
+      (<code class="literal">String</code>) namespace URIs as values.</p><p>Note there is nothing like a default namespace in XPath
+      selectors.  If you are using namespaces in your XPath, all
+      namespaces need a prefix (of length greater than zero).  This
+      is independent of the prefixes used in your document.</p><p>The following example is taken from XMLUnit's own tests.
+      It demonstrates that the namespace prefix of the document under
+      test is irrelevant and shows how to set up the namespace
+      context.</p><div class="example"><a name="idp1745584"></a><p class="title"><b>Example 32. Using Namespaces in XPath Tests</b></p><div class="example-contents"><pre class="programlisting">
+    String testDoc = "&lt;t:test xmlns:t=\"urn:foo\"&gt;&lt;t:bar/&gt;&lt;/t:test&gt;";
+    Document d = XMLUnit.buildControlDocument(testDoc);
+    HashMap m = new HashMap();
+    m.put("foo", "urn:foo");
+
+    NamespaceContext ctx = new SimpleNamespaceContext(m);
+    XpathEngine engine = XMLUnit.newXpathEngine();
+    engine.setNamespaceContext(ctx);
+
+    NodeList l = engine.getMatchingNodes("//foo:bar", d);
+    assertEquals(1, l.getLength());
+    assertEquals(Node.ELEMENT_NODE, l.item(0).getNodeType());
+</pre></div></div><br class="example-break"><p>It is possible to set a global
+      <code class="literal">NamespaceContext</code>, see <a class="xref" href="ar01s05.html#XPath:%20Configuration" title="5.4. Configuration Options">Section 5.4, &#8220;Configuration Options&#8221;</a> for details.</p></div><div class="section" title="5.3. JUnit 3.x Convenience Methods"><div class="titlepage"><div><div><h3 class="title"><a name="XPath:%20JUnit%203"></a>5.3. JUnit 3.x Convenience Methods</h3></div></div></div><p><code class="literal">XMLTestCase</code> and
+      <code class="literal">XMLAssert</code> provide several overloads for the
+      following common types of assertions:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">Two XPath expression should return the same DOM
+        <code class="literal">NodeList</code> as result:
+        <code class="literal">assertXpathsEqual</code>.  There are methods that
+        use two different expressions on the same document and others
+        that compare expressions selecting from two different
+        documents.
+
+          <p>The <code class="literal">NodeList</code>s are wrapped into a
+          surrogate root XML element and the resulting DOM
+          <code class="literal">Document</code>s are compared using
+          <code class="literal">Diff.similar()</code>.</p></li><li class="listitem">The opposite of the above, the expressions should
+        yield different results:
+        <code class="literal">assertXpathsNotEqual</code>.</li><li class="listitem">Two XPath expression should return the same
+        "String-ified" result:
+        <code class="literal">assertXpathValuesEqual</code>.  There are methods
+        that use two different expressions on the same document and
+        others that compare expressions selecting from two different
+        documents.</li><li class="listitem">The opposite of the above, the expressions should
+        yield different results:
+        <code class="literal">assertXpathValuesNotEqual</code>.</li><li class="listitem">The XPath expression should return an expected value
+        when "String-ified":
+        <code class="literal">assertXpathEvaluatesTo</code>.</li><li class="listitem">The <code class="literal">NodeList</code> selected by an XPath
+        expression is not empty:
+        <code class="literal">assertXpathExists</code>.</li><li class="listitem">The <code class="literal">NodeList</code> selected by an XPath
+        expression is empty:
+        <code class="literal">assertXpathNotExists</code>.</li></ul></div><p>Neither method provides any control over the message of
+      the <code class="literal">AssertionFailedError</code> in case of a
+      failure.</p></div><div class="section" title="5.4. Configuration Options"><div class="titlepage"><div><div><h3 class="title"><a name="XPath:%20Configuration"></a>5.4. Configuration Options</h3></div></div></div><p>When using <code class="literal">XpathEngine</code> directly you are
+      responsible for creating the DOM document yourself.  If you use
+      the convenience methods of <code class="literal">XMLTestCase</code> or
+      <code class="literal">XMLAssert</code> you have several options to specify
+      the input; XMLUnit will use the control or test parser that has
+      been configured (see <a class="xref" href="ar01s02.html#JAXP" title="2.4.1. JAXP">Section 2.4.1, &#8220;JAXP&#8221;</a>) to create a DOM
+      document from the given piece of XML in that case - using the
+      configured <code class="literal">EntityResolver</code>(s) (see <a class="xref" href="ar01s02.html#EntityResolver" title="2.4.2. EntityResolver">Section 2.4.2, &#8220;<code class="literal">EntityResolver</code>&#8221;</a>) if any.</p><p>If JAXP 1.3 is not available,
+      <code class="literal">SimpleXpathEngine</code> will use the configured
+      JAXP XSLT transformer (see <a class="xref" href="ar01s02.html#JAXP" title="2.4.1. JAXP">Section 2.4.1, &#8220;JAXP&#8221;</a>) under the
+      covers.</p><p>When using JAXP 1.3 you can chose the actual
+      <code class="literal">XPathFactory</code> implementation using
+      <code class="literal">XMLUnit.setXPathFactory</code>.</p><p>It is possible to establish a global
+      <code class="literal">NamespaceContext</code> with the help of the
+      <code class="literal">XMLUnit.setXpathNamespaceContext</code> method.  Any
+      <code class="literal">XpathEngine</code> created by
+      <code class="literal">XMLUnit.newXpathEngine</code> will automatically use
+      the given context.  Note that the JUnit 3 convenience methods
+      use <code class="literal">XMLUnit.newXpathEngine</code> implicitly and
+      will thus use the configured
+      <code class="literal">NamespaceContext</code>.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4. Validating XML Documents </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 6. DOM Tree Walking</td></tr></table></div></body></html>

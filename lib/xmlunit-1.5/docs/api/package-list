@@ -1,0 +1,5 @@
+org.custommonkey.xmlunit
+org.custommonkey.xmlunit.examples
+org.custommonkey.xmlunit.exceptions
+org.custommonkey.xmlunit.jaxp13
+org.custommonkey.xmlunit.util

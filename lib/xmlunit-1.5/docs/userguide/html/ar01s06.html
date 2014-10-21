@@ -1,0 +1,174 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>6. DOM Tree Walking</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="XMLUnit Java User's Guide"><link rel="up" href="index.html" title="XMLUnit Java User's Guide"><link rel="prev" href="ar01s05.html" title="5. XPath Tests"><link rel="next" href="apa.html" title="A. Changes"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">6. DOM Tree Walking</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s05.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apa.html">Next</a></td></tr></table><hr></div><div class="section" title="6. DOM Tree Walking"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="DOM%20Tree%20Walking"></a>6. DOM Tree Walking</h2></div></div></div><p>Sometimes it is easier to test a piece of XML's validity by
+    traversing the whole document node by node and test each node
+    individually.  Maybe there is no control XML to validate against
+    or the expected value of an element's content has to be
+    calculated.  There may be several reasons.</p><p>XMLUnit supports this approach of testing via the
+    <code class="literal">NodeTest</code> class.  In order to use it, you need a
+    DOM implementation that generates <code class="literal">Document</code>
+    instances that implement the optional
+    <code class="literal">org.w3c.traversal.DocumentTraversal</code> interface,
+    which is not part of JAXP's standardized DOM support.</p><div class="section" title="6.1. DocumentTraversal"><div class="titlepage"><div><div><h3 class="title"><a name="DocumentTraversal"></a>6.1. <code class="literal">DocumentTraversal</code></h3></div></div></div><p>As of the release of XMLUnit 1.1 the
+      <code class="literal">Document</code> instances created by most parsers
+      implement <code class="literal">DocumentTraversal</code>, this includes
+      but is not limited to Apache Xerces, the parser shipping with
+      Sun's JDK 5 and later or GNU JAXP.  One notable exception is
+      Apache Crimson, which also means the parser shipping with Sun's
+      JDK 1.4 does not support traversal; you need to specify a
+      different parser when using JDK 1.4 (see <a class="xref" href="ar01s02.html#JAXP" title="2.4.1. JAXP">Section 2.4.1, &#8220;JAXP&#8221;</a>).</p><p>You can test whether your XML parser supports
+      <code class="literal">DocumentTraversal</code> by invoking
+      <code class="literal">org.w3c.dom.DOMImplementation</code>'s
+      <code class="literal">hasFeature</code> method with the feature
+      <code class="literal">"Traversal"</code>.</p></div><div class="section" title="6.2. NodeTest"><div class="titlepage"><div><div><h3 class="title"><a name="NodeTest"></a>6.2. <code class="literal">NodeTest</code></h3></div></div></div><p>The <code class="literal">NodeTest</code> is instantiated with a
+      piece of XML to traverse.  It offers two
+      <code class="literal">performTest</code> methods:</p><pre class="programlisting">
+    /**
+     * Does this NodeTest pass using the specified NodeTester instance?
+     * @param tester
+     * @param singleNodeType note &lt;code&gt;Node.ATTRIBUTE_NODE&lt;/code&gt; is not
+     *  exposed by the DocumentTraversal node iterator unless the root node
+     *  is itself an attribute - so a NodeTester that needs to test attributes
+     *  should obtain those attributes from &lt;code&gt;Node.ELEMENT_NODE&lt;/code&gt;
+     *  nodes
+     * @exception NodeTestException if test fails
+     */
+    public void performTest(NodeTester tester, short singleNodeType);
+
+    /**
+     * Does this NodeTest pass using the specified NodeTester instance?
+     * @param tester
+     * @param nodeTypes note &lt;code&gt;Node.ATTRIBUTE_NODE&lt;/code&gt; is not
+     *  exposed by the DocumentTraversal node iterator unless the root node
+     *  is itself an attribute - so a NodeTester that needs to test attributes
+     *  should obtain those attributes from &lt;code&gt;Node.ELEMENT_NODE&lt;/code&gt;
+     *  nodes instead
+     * @exception NodeTestException if test fails
+     */
+    public void performTest(NodeTester tester, short[] nodeTypes);
+</pre><p><code class="literal">NodeTester</code> is the class testing each
+      node and is described in the next section.</p><p>The second argument limits the tests on DOM
+      <code class="literal">Node</code>s of (a) specific type(s).
+      <code class="literal">Node</code> types are specified via the
+      <code class="literal">static</code> fields of the <code class="literal">Node</code>
+      class.  Any <code class="literal">Node</code> of a type not specified as
+      the second argument to <code class="literal">performTest</code> will be
+      ignored.</p><p>Unfortunately XML attributes are not exposed as
+      <code class="literal">Node</code>s during traversal.  If you need access
+      to attributes you must add <code class="literal">Node.ELEMENT_NODE</code>
+      to the second argument of <code class="literal">performTest</code> and
+      access the attributes from their parent
+      <code class="literal">Element</code>.</p><div class="example"><a name="nodetest-attributes"></a><p class="title"><b>Example 33. Accessing Attributes in a
+          <code class="literal">NodeTest</code></b></p><div class="example-contents"><pre class="programlisting">
+    ...
+    NodeTest nt = new NodeTest(myXML);
+    NodeTester tester = new MyNodeTester();
+    nt.performTest(tester, Node.ELEMENT_NODE);
+    ...
+
+class MyNodeTester implements NodeTester {
+    public void testNode(Node aNode, NodeTest test) {
+        Element anElement = (Element) aNode;
+        Attr attributeToTest = anElement.getAttributeNode(ATTRIBUTE_NAME);
+        ...
+    }
+    ...
+}
+</pre></div></div><br class="example-break"><p>Any entities that appear as part of the
+      <code class="literal">Document</code> are expanded before the traversal
+      starts.</p></div><div class="section" title="6.3. NodeTester"><div class="titlepage"><div><div><h3 class="title"><a name="NodeTester"></a>6.3. NodeTester</h3></div></div></div><p>Implementations of the <code class="literal">NodeTester</code>
+      interface are responsible for the actual test:</p><pre class="programlisting">
+    /**
+     * Validate a single Node
+     * @param aNode
+     * @param forTest
+     * @exception NodeTestException if the node fails the test
+     */
+    void testNode(Node aNode, NodeTest forTest) throws NodeTestException ;
+
+    /**
+     * Validate that the Nodes passed one-by-one to the &lt;code&gt;testNode&lt;/code&gt;
+     * method were all the Nodes expected.
+     * @param forTest
+     * @exception NodeTestException if this instance was expecting more nodes
+     */
+    void noMoreNodes(NodeTest forTest) throws NodeTestException ;
+</pre><p><code class="literal">NodeTest</code> invokes
+      <code class="literal">testNode</code> for each <code class="literal">Node</code> as
+      soon as it is reached on the traversal.  This means
+      <code class="literal">NodeTester</code> "sees" the
+      <code class="literal">Node</code>s in the same order they appear within
+      the tree.</p><p><code class="literal">noMoreNodes</code> is invoked when the
+      traversal is finished.  It will also be invoked if the tree didn't
+      contain any matched <code class="literal">Node</code>s at all.</p><p>Implementations of <code class="literal">NodeTester</code> are
+      expected to throw a <code class="literal">NodeTestException</code> if the
+      current not doesn't match the test's expectations or more nodes
+      have been expected when <code class="literal">noMoreNodes</code> is
+      called.</p><p>XMLUnit ships with two implementations of
+      <code class="literal">NodeTest</code> that are described in the following
+      to sections.</p><div class="section" title="6.3.1. AbstractNodeTester"><div class="titlepage"><div><div><h4 class="title"><a name="AbstractNodeTester"></a>6.3.1. <code class="literal">AbstractNodeTester</code></h4></div></div></div><p><code class="literal">AbstractNodeTester</code> implements
+        <code class="literal">testNode</code> by testing the passed in
+        <code class="literal">Node</code> for its type and delegating to one of
+        the more specific <code class="literal">test...</code> Methods it adds.
+        By default the new <code class="literal">test...</code> methods all
+        throw a <code class="literal">NodeTestException</code> because of an
+        unexpected <code class="literal">Node</code>.</p><p>It further implements <code class="literal">noMoreNodes</code>
+        with an empty method - i.e. it does nothing.</p><p>If you are only testing for specific types of
+        <code class="literal">Node</code> it may be more convenient to subclass
+        <code class="literal">AbstractNodeTester</code>.  For example <a class="xref" href="ar01s06.html#nodetest-attributes" title="Example 33. Accessing Attributes in a NodeTest">Example 33, &#8220;Accessing Attributes in a
+          <code class="literal">NodeTest</code>&#8221;</a> could be re-written as:</p><div class="example"><a name="idp1838160"></a><p class="title"><b>Example 34. Accessing Attributes in a
+            <code class="literal">NodeTest</code> -
+            <code class="literal">AbstractNodeTester</code> version</b></p><div class="example-contents"><pre class="programlisting">
+    ...
+    NodeTest nt = new NodeTest(myXML);
+    NodeTester tester = new AbstractNodeTester() {
+        public void testElement(Element element) throws NodeTestException {
+            Attr attributeToTest = element.getAttributeNode(ATTRIBUTE_NAME);
+            ...
+        }
+    };
+    nt.performTest(tester, Node.ELEMENT_NODE);
+    ...
+</pre></div></div><br class="example-break"><p>Note that even though
+        <code class="literal">AbstractNodeTester</code> contains a
+        <code class="literal">testAttribute</code> method it will never be
+        called by default and you still need to access attributes via
+        their parent elements.</p><p>Note also that the root of the test is the document's
+        root element, so any <code class="literal">Node</code>s preceding the
+        document's root <code class="literal">Element</code> won't be visited
+        either.  For this reason the
+        <code class="literal">testDocumentType</code>,
+        <code class="literal">testEntity</code> and
+        <code class="literal">testNotation</code> methods are probably never
+        called either.</p><p>Finally, all entity references have been expanded before
+        the traversal started.  <code class="literal">EntityReference</code>s
+        will have been replaced by their replacement text if it is
+        available, which means <code class="literal">testEntityReference</code>
+        will not be called for them either.  Instead the replacement
+        text will show up as (part of) a <code class="literal">Text</code> node
+        or as <code class="literal">Element</code> node, depending on the
+        entity's definition.</p></div><div class="section" title="6.3.2. CountingNodeTester"><div class="titlepage"><div><div><h4 class="title"><a name="CountingNodeTester"></a>6.3.2. <code class="literal">CountingNodeTester</code></h4></div></div></div><p><code class="literal">org.custommonkey.xmlunit.examples.CountingNodeTester</code>
+        is a simple example <code class="literal">NodeTester</code> that asserts
+        that a given number of <code class="literal">Node</code>s have been
+        traversed.  It will throw a
+        <code class="literal">NodeTestException</code> when
+        <code class="literal">noMoreNodes</code> is called before the expected
+        number of <code class="literal">Node</code>s has been visited or the
+        actual number of nodes exceeded the expected count.</p></div></div><div class="section" title="6.4. JUnit 3.x Convenience Methods"><div class="titlepage"><div><div><h3 class="title"><a name="DOM%20Tree:%20JUnit%203"></a>6.4. JUnit 3.x Convenience Methods</h3></div></div></div><p><code class="literal">XMLAssert</code> and
+      <code class="literal">XMLTestCase</code> contain overloads of
+      <code class="literal">assertNodeTestPasses</code> methods.</p><p>The most general form of it expects you to create a
+      <code class="literal">NodeTest</code> instance yourself and lets you
+      specify whether you expect the test to fail or to pass.</p><p>The other two overloads create a
+      <code class="literal">NodeTest</code> instance from either
+      <code class="literal">String</code> or a SAX
+      <code class="literal">InputSource</code> and are specialized for the case
+      where you are only interested in a single <code class="literal">Node</code>
+      type and expect the test to pass.</p><p>Neither method provides any control over the message of
+      the <code class="literal">AssertionFailedError</code> in case of a
+      failure.</p></div><div class="section" title="6.5. Configuration Options"><div class="titlepage"><div><div><h3 class="title"><a name="DOM%20Tree:%20Configuration"></a>6.5. Configuration Options</h3></div></div></div><p>The only configurable option for
+      <code class="literal">NodeTest</code> is the XML parser used if the piece
+      of XML is not specified as a <code class="literal">Document</code> or
+      <code class="literal">DocumentTraversal</code>.
+      <code class="literal">NodeTest</code> will use the "control" parser that
+      has been configured - see <a class="xref" href="ar01s02.html#JAXP" title="2.4.1. JAXP">Section 2.4.1, &#8220;JAXP&#8221;</a> for
+      details.</p><p>It will also use the <code class="literal">EntityResolver</code>
+      configured for the control parser if one has been set - see
+      <a class="xref" href="ar01s02.html#EntityResolver" title="2.4.2. EntityResolver">Section 2.4.2, &#8220;<code class="literal">EntityResolver</code>&#8221;</a>.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s05.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="apa.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">5. XPath Tests </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> A. Changes</td></tr></table></div></body></html>

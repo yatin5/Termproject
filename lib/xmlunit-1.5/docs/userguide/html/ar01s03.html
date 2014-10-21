@@ -1,0 +1,721 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>3. Comparing Pieces of XML</title><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="XMLUnit Java User's Guide"><link rel="up" href="index.html" title="XMLUnit Java User's Guide"><link rel="prev" href="ar01s02.html" title="2. Using XMLUnit"><link rel="next" href="ar01s04.html" title="4. Validating XML Documents"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3. Comparing Pieces of XML</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr></table><hr></div><div class="section" title="3. Comparing Pieces of XML"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="Comparing%20Pieces%20of%20XML"></a>3. Comparing Pieces of XML</h2></div></div></div><div class="section" title="3.1. The Difference Engine"><div class="titlepage"><div><div><h3 class="title"><a name="The%20Difference%20Engine"></a>3.1. The Difference Engine</h3></div></div></div><p>At the center of XMLUnit's support for comparisons is the
+      <code class="literal">DifferenceEngine</code> class.  In practice you
+      rarely deal with it directly but rather use it via instances of
+      <code class="literal">Diff</code> or <code class="literal">DetailedDiff</code>
+      classes (see <a class="xref" href="ar01s03.html#Diff" title="3.5. Diff and DetailedDiff">Section 3.5, &#8220;<code class="literal">Diff</code> and
+      <code class="literal">DetailedDiff</code>&#8221;</a>).</p><p>The <code class="literal">DifferenceEngine</code> walks two trees of
+      DOM <code class="literal">Node</code>s, the control and the test tree, and
+      compares the nodes.  Whenever it detects a difference, it sends
+      a message to a configured <code class="literal">DifferenceListener</code>
+      (see <a class="xref" href="ar01s03.html#DifferenceListener" title="3.3. DifferenceListener">Section 3.3, &#8220;<code class="literal">DifferenceListener</code>&#8221;</a>) and asks a
+      <code class="literal">ComparisonController</code> (see <a class="xref" href="ar01s03.html#ComparisonController" title="3.2. ComparisonController">Section 3.2, &#8220;<code class="literal">ComparisonController</code>&#8221;</a>) whether the current comparison
+      should be halted.</p><p>In some cases the order of elements in two pieces of XML
+      may not be significant.  If this is true, the
+      <code class="literal">DifferenceEngine</code> needs help to determine
+      which <code class="literal">Element</code>s to compare.  This is the job
+      of an <code class="literal">ElementQualifier</code> (see <a class="xref" href="ar01s03.html#ElementQualifier" title="3.4. ElementQualifier">Section 3.4, &#8220;<code class="literal">ElementQualifier</code>&#8221;</a>).</p><p>The types of differences
+      <code class="literal">DifferenceEngine</code> can detect are enumerated in
+      the <code class="literal">DifferenceConstants</code> interface and
+      represented by instances of the <code class="literal">Difference</code>
+      class.</p><p>A <code class="literal">Difference</code> can be recoverable;
+      recoverable <code class="literal">Difference</code>s make the
+      <code class="literal">Diff</code> class consider two pieces of XML similar
+      while non-recoverable <code class="literal">Difference</code>s render the
+      two pieces different.</p><p>The types of <code class="literal">Difference</code>s that are
+      currently detected are listed in <a class="xref" href="ar01s03.html#docleveldiff" title="Table 1. Document level Differences detected by DifferenceEngine">Table 1, &#8220;Document level <code class="literal">Difference</code>s detected by
+        <code class="literal">DifferenceEngine</code>&#8221;</a>
+      to <a class="xref" href="ar01s03.html#otherdiff" title="Table 4. Other Differences detected by DifferenceEngine">Table 4, &#8220;Other <code class="literal">Difference</code>s detected by
+        <code class="literal">DifferenceEngine</code>&#8221;</a> (the first two columns refer to
+      the <code class="literal">DifferenceConstants</code> class).</p><div class="table"><a name="docleveldiff"></a><p class="title"><b>Table 1. Document level <code class="literal">Difference</code>s detected by
+        <code class="literal">DifferenceEngine</code></b></p><div class="table-contents"><table summary="Document level Differences detected by
+        DifferenceEngine" width="100%" border="1"><colgroup><col align="center" class="id"><col align="center" class="constant"><col align="center" class="recoverable"><col align="left" class="description"></colgroup><thead><tr><th align="center"><code class="literal">ID</code></th><th align="center"><code class="literal">Constant</code></th><th align="center"><code class="literal">recoverable</code></th><th align="center">Description</th></tr></thead><tbody><tr><td align="center"><code class="literal">HAS_DOCTYPE_DECLARATION_ID</code></td><td align="center"><code class="literal">HAS_DOCTYPE_DECLARATION</code></td><td align="center"><code class="literal">true</code></td><td align="left">One piece of XML has a DOCTYPE declaration while
+                the other one has not.</td></tr><tr><td align="center"><code class="literal">DOCTYPE_NAME_ID</code></td><td align="center"><code class="literal">DOCTYPE_NAME</code></td><td align="center"><code class="literal">false</code></td><td align="left">Both pieces of XML contain a DOCTYPE declaration
+                but the declarations specify different names for the
+                root element.</td></tr><tr><td align="center"><code class="literal">DOCTYPE_PUBLIC_ID_ID</code></td><td align="center"><code class="literal">DOCTYPE_PUBLIC_ID</code></td><td align="center"><code class="literal">false</code></td><td align="left">Both pieces of XML contain a DOCTYPE declaration
+                but the declarations specify different PUBLIC
+                identifiers.</td></tr><tr><td align="center"><code class="literal">DOCTYPE_SYSTEM_ID_ID</code></td><td align="center"><code class="literal">DOCTYPE_SYSTEM_ID</code></td><td align="center"><code class="literal">true</code></td><td align="left">Both pieces of XML contain a DOCTYPE declaration
+                but the declarations specify different SYSTEM
+                identifiers.</td></tr><tr><td align="center"><code class="literal">NODE_TYPE_ID</code></td><td align="center"><code class="literal">NODE_TYPE</code></td><td align="center"><code class="literal">false</code></td><td align="left">The test piece of XML contains a different type
+              of node than was expected.  This type of difference will
+              also occur if either the root control or test
+              <code class="literal">Node</code> is <code class="literal">null</code> while
+              the other is not.</td></tr><tr><td align="center"><code class="literal">NAMESPACE_PREFIX_ID</code></td><td align="center"><code class="literal">NAMESPACE_PREFIX</code></td><td align="center"><code class="literal">true</code></td><td align="left">Two nodes use different prefixes for the same
+                XML Namespace URI in the two pieces of XML.</td></tr><tr><td align="center"><code class="literal">NAMESPACE_URI_ID</code></td><td align="center"><code class="literal">NAMESPACE_URI</code></td><td align="center"><code class="literal">false</code></td><td align="left">Two nodes in the two pieces of XML share the same
+              local name but use different XML Namespace URIs.</td></tr><tr><td align="center"><code class="literal">SCHEMA_LOCATION_ID</code></td><td align="center"><code class="literal">SCHEMA_LOCATION</code></td><td align="center"><code class="literal">true</code></td><td align="left">Two nodes have different values for the
+              <code class="literal">schemaLocation</code> attribute of the
+              XMLSchema-Instance namespace.  The attribute could be
+              present on only one of the two nodes.</td></tr><tr><td align="center"><code class="literal">NO_NAMESPACE_SCHEMA_LOCATION_ID</code></td><td align="center"><code class="literal">NO_NAMESPACE_SCHEMA_LOCATION</code></td><td align="center"><code class="literal">true</code></td><td align="left">Two nodes have different values for the
+              <code class="literal">noNamespaceSchemaLocation</code> attribute
+              of the XMLSchema-Instance namespace.  The attribute
+              could be present on only one of the two nodes.</td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="elementleveldiff"></a><p class="title"><b>Table 2. Element level <code class="literal">Difference</code>s detected by
+        <code class="literal">DifferenceEngine</code></b></p><div class="table-contents"><table summary="Element level Differences detected by
+        DifferenceEngine" width="100%" border="1"><colgroup><col align="center" class="id"><col align="center" class="constant"><col align="center" class="recoverable"><col align="left" class="description"></colgroup><thead><tr><th align="center"><code class="literal">ID</code></th><th align="center"><code class="literal">Constant</code></th><th align="center"><code class="literal">recoverable</code></th><th align="center">Description</th></tr></thead><tbody><tr><td align="center"><code class="literal">ELEMENT_TAG_NAME_ID</code></td><td align="center"><code class="literal">ELEMENT_TAG_NAME</code></td><td align="center"><code class="literal">false</code></td><td align="left">The two pieces of XML contain elements with
+                different tag names.</td></tr><tr><td align="center"><code class="literal">ELEMENT_NUM_ATTRIBUTES_ID</code></td><td align="center"><code class="literal">ELEMENT_NUM_ATTRIBUTES</code></td><td align="center"><code class="literal">false</code></td><td align="left">The two pieces of XML contain a common element,
+                but the number of attributes on the element is
+                different.</td></tr><tr><td align="center"><code class="literal">HAS_CHILD_NODES_ID</code></td><td align="center"><code class="literal">HAS_CHILD_NODES</code></td><td align="center"><code class="literal">false</code></td><td align="left">An element in one piece of XML has child nodes
+                while the corresponding one in the other has not.</td></tr><tr><td align="center"><code class="literal">CHILD_NODELIST_LENGTH_ID</code></td><td align="center"><code class="literal">CHILD_NODELIST_LENGTH</code></td><td align="center"><code class="literal">false</code></td><td align="left">Two elements in the two pieces of XML differ by
+                their number of child nodes.</td></tr><tr><td align="center"><code class="literal">CHILD_NODELIST_SEQUENCE_ID</code></td><td align="center"><code class="literal">CHILD_NODELIST_SEQUENCE</code></td><td align="center"><code class="literal">true</code></td><td align="left">Two elements in the two pieces of XML contain the
+                same child nodes but in a different order.</td></tr><tr><td align="center"><code class="literal">CHILD_NODE_NOT_FOUND_ID</code></td><td align="center"><code class="literal">CHILD_NODE_NOT_FOUND</code></td><td align="center"><code class="literal">false</code></td><td align="left">A child node in one piece of XML couldn't be
+                matched against any other node of the other piece.</td></tr><tr><td align="center"><code class="literal">ATTR_SEQUENCE_ID</code></td><td align="center"><code class="literal">ATTR_SEQUENCE</code></td><td align="center"><code class="literal">true</code></td><td align="left">The attributes on an element appear in different
+              order<sup>[<a name="idp1202272" href="#ftn.idp1202272" class="footnote">a</a>]</sup> in the two pieces of
+              XML.</td></tr></tbody><tbody class="footnotes"><tr><td colspan="4"><div class="footnote"><p><sup>[<a id="ftn.idp1202272" href="#idp1202272" class="para">a</a>] </sup>Note that the order of attributes
+              is not significant in XML, different parsers may return
+              attributes in a different order even if parsing the same
+              XML document.  There is an option to turn this check off
+              - see <a class="xref" href="ar01s03.html#Comparing:%20Configuration" title="3.8. Configuration Options">Section 3.8, &#8220;Configuration Options&#8221;</a> - but it is on
+              by default for backwards compatibility
+              reasons</p></div></td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="attributeleveldiff"></a><p class="title"><b>Table 3. Attribute level <code class="literal">Difference</code>s detected by
+        <code class="literal">DifferenceEngine</code></b></p><div class="table-contents"><table summary="Attribute level Differences detected by
+        DifferenceEngine" width="100%" border="1"><colgroup><col align="center" class="id"><col align="center" class="constant"><col align="center" class="recoverable"><col align="left" class="description"></colgroup><thead><tr><th align="center"><code class="literal">ID</code></th><th align="center"><code class="literal">Constant</code></th><th align="center"><code class="literal">recoverable</code></th><th align="center">Description</th></tr></thead><tbody><tr><td align="center"><code class="literal">ATTR_VALUE_EXPLICITLY_SPECIFIED_ID</code></td><td align="center"><code class="literal">ATTR_VALUE_EXPLICITLY_SPECIFIED</code></td><td align="center"><code class="literal">true</code></td><td align="left">An attribute that has a default value according
+              to the content model of the element in question has been
+              specified explicitly in one piece of XML but not in the
+              other.<sup>[<a name="idp1218960" href="#ftn.idp1218960" class="footnote">a</a>]</sup></td></tr><tr><td align="center"><code class="literal">ATTR_NAME_NOT_FOUND_ID</code></td><td align="center"><code class="literal">ATTR_NAME_NOT_FOUND</code></td><td align="center"><code class="literal">false</code></td><td align="left">One piece of XML contains an attribute on an
+                element that is missing in the other.</td></tr><tr><td align="center"><code class="literal">ATTR_VALUE_ID</code></td><td align="center"><code class="literal">ATTR_VALUE</code></td><td align="center"><code class="literal">false</code></td><td align="left">The value of an element's attribute is different
+                in the two pieces of XML.</td></tr></tbody><tbody class="footnotes"><tr><td colspan="4"><div class="footnote"><p><sup>[<a id="ftn.idp1218960" href="#idp1218960" class="para">a</a>] </sup>In order for this difference to be
+              detected the parser must have been in validating mode
+              when the piece of XML was parsed and the DTD or XML
+              Schema must have been available.</p></div></td></tr></tbody></table></div></div><br class="table-break"><div class="table"><a name="otherdiff"></a><p class="title"><b>Table 4. Other <code class="literal">Difference</code>s detected by
+        <code class="literal">DifferenceEngine</code></b></p><div class="table-contents"><table summary="Other Differences detected by
+        DifferenceEngine" width="100%" border="1"><colgroup><col align="center" class="id"><col align="center" class="constant"><col align="center" class="recoverable"><col align="left" class="description"></colgroup><thead><tr><th align="center"><code class="literal">ID</code></th><th align="center"><code class="literal">Constant</code></th><th align="center"><code class="literal">recoverable</code></th><th align="center">Description</th></tr></thead><tbody><tr><td align="center"><code class="literal">COMMENT_VALUE_ID</code></td><td align="center"><code class="literal">COMMENT_VALUE</code></td><td align="center"><code class="literal">false</code></td><td align="left">The content of two comments is different in the
+                two pieces of XML.</td></tr><tr><td align="center"><code class="literal">PROCESSING_INSTRUCTION_TARGET_ID</code></td><td align="center"><code class="literal">PROCESSING_INSTRUCTION_TARGET</code></td><td align="center"><code class="literal">false</code></td><td align="left">The target of two processing instructions is
+                different in the two pieces of XML.</td></tr><tr><td align="center"><code class="literal">PROCESSING_INSTRUCTION_DATA_ID</code></td><td align="center"><code class="literal">PROCESSING_INSTRUCTION_DATA</code></td><td align="center"><code class="literal">false</code></td><td align="left">The data of two processing instructions is
+                different in the two pieces of XML.</td></tr><tr><td align="center"><code class="literal">CDATA_VALUE_ID</code></td><td align="center"><code class="literal">CDATA_VALUE</code></td><td align="center"><code class="literal">false</code></td><td align="left">The content of two CDATA sections is different in
+                the two pieces of XML.</td></tr><tr><td align="center"><code class="literal">TEXT_VALUE_ID</code></td><td align="center"><code class="literal">TEXT_VALUE</code></td><td align="center"><code class="literal">false</code></td><td align="left">The value of two texts is different in the two
+                pieces of XML.</td></tr></tbody></table></div></div><br class="table-break"><p>Note that some of the differences listed may be ignored by
+      the <code class="literal">DifferenceEngine</code> if certain configuration
+      options have been specified.  See <a class="xref" href="ar01s03.html#Comparing:%20Configuration" title="3.8. Configuration Options">Section 3.8, &#8220;Configuration Options&#8221;</a> for details.</p><p><code class="literal">DifferenceEngine</code> passes differences
+      found around as instances of the <code class="literal">Difference</code>
+      class.  In addition to the type of of difference this class also
+      holds information on the nodes that have been found to be
+      different.  The nodes are described by
+      <code class="literal">NodeDetail</code> instances that encapsulate the DOM
+      <code class="literal">Node</code> instance as well as the XPath expression
+      that locates the <code class="literal">Node</code> inside the given piece
+      of XML.  <code class="literal">NodeDetail</code> also contains a "value"
+      that provides more information on the actual values that have
+      been found to be different, the concrete interpretation depends
+      on the type of difference as can be seen in <a class="xref" href="ar01s03.html#diffvalue" title="Table 5. Contents of NodeDetail.getValue() for Differences">Table 5, &#8220;Contents of <code class="literal">NodeDetail.getValue()</code>
+        for <code class="literal">Difference</code>s&#8221;</a>.</p><div class="table"><a name="diffvalue"></a><p class="title"><b>Table 5. Contents of <code class="literal">NodeDetail.getValue()</code>
+        for <code class="literal">Difference</code>s</b></p><div class="table-contents"><table summary="Contents of NodeDetail.getValue()
+        for Differences" border="1"><colgroup><col align="center" class="id"><col align="left" class="value"></colgroup><thead><tr><th align="center"><code class="literal">Difference.getId()</code></th><th align="center"><code class="literal">NodeDetail.getValue()</code></th></tr></thead><tbody><tr><td align="center"><code class="literal">HAS_DOCTYPE_DECLARATION_ID</code></td><td align="left"><code class="literal">"not null"</code> if the document has
+              a DOCTYPE declaration, <code class="literal">"null"</code>
+              otherwise.</td></tr><tr><td align="center"><code class="literal">DOCTYPE_NAME_ID</code></td><td align="left">The name of the root element.</td></tr><tr><td align="center"><code class="literal">DOCTYPE_PUBLIC_ID</code></td><td align="left">The PUBLIC identifier.</td></tr><tr><td align="center"><code class="literal">DOCTYPE_SYSTEM_ID</code></td><td align="left">The SYSTEM identifier.</td></tr><tr><td align="center"><code class="literal">NODE_TYPE_ID</code></td><td align="left">If one node was absent: <code class="literal">"not
+              null"</code> if the node exists,
+              <code class="literal">"null"</code> otherwise.  If the node types
+              differ the value will be a string-ified version of
+              <code class="literal">org.w3c.dom.Node.getNodeType()</code>.</td></tr><tr><td align="center"><code class="literal">NAMESPACE_PREFIX_ID</code></td><td align="left">The Namespace prefix.</td></tr><tr><td align="center"><code class="literal">NAMESPACE_URI_ID</code></td><td align="left">The Namespace URI.</td></tr><tr><td align="center"><code class="literal">SCHEMA_LOCATION_ID</code></td><td align="left">The attribute's value or "[attribute absent]" if
+              it has not been specified.</td></tr><tr><td align="center"><code class="literal">NO_NAMESPACE_SCHEMA_LOCATION_ID</code></td><td align="left">The attribute's value or "[attribute absent]" if
+              it has not been specified.</td></tr><tr><td align="center"><code class="literal">ELEMENT_TAG_NAME_ID</code></td><td align="left">The tag name with any Namespace information
+              stripped.</td></tr><tr><td align="center"><code class="literal">ELEMENT_NUM_ATTRIBUTES_ID</code></td><td align="left">The number of attributes present turned into a
+              <code class="literal">String</code>.</td></tr><tr><td align="center"><code class="literal">HAS_CHILD_NODES_ID</code></td><td align="left"><code class="literal">"true"</code> if the element has
+              child nodes, <code class="literal">"false"</code>
+              otherwise.</td></tr><tr><td align="center"><code class="literal">CHILD_NODELIST_LENGTH_ID</code></td><td align="left">The number of child nodes present turned into a
+              <code class="literal">String</code>.</td></tr><tr><td align="center"><code class="literal">CHILD_NODELIST_SEQUENCE_ID</code></td><td align="left">The sequence number of this child node turned into a
+              <code class="literal">String</code>.</td></tr><tr><td align="center"><code class="literal">CHILD_NODE_NOT_FOUND_ID</code></td><td align="left">The name of the unmatched node or
+              <code class="literal">null</code>.</td></tr><tr><td align="center"><code class="literal">ATTR_SEQUENCE_ID</code></td><td align="left">The attribute's name.</td></tr><tr><td align="center"><code class="literal">ATTR_VALUE_EXPLICITLY_SPECIFIED_ID</code></td><td align="left"><code class="literal">"true"</code> if the attribute has
+              been specified, <code class="literal">"false"</code>
+              otherwise.</td></tr><tr><td align="center"><code class="literal">ATTR_NAME_NOT_FOUND_ID</code></td><td align="left">The attribute's name or <code class="literal">null</code>.</td></tr><tr><td align="center"><code class="literal">ATTR_VALUE_ID</code></td><td align="left">The attribute's value.</td></tr><tr><td align="center"><code class="literal">COMMENT_VALUE_ID</code></td><td align="left">The actual comment.</td></tr><tr><td align="center"><code class="literal">PROCESSING_INSTRUCTION_TARGET_ID</code></td><td align="left">The processing instruction's target.</td></tr><tr><td align="center"><code class="literal">PROCESSING_INSTRUCTION_DATA_ID</code></td><td align="left">The processing instruction's data.</td></tr><tr><td align="center"><code class="literal">CDATA_VALUE_ID</code></td><td align="left">The content of the CDATA section.</td></tr><tr><td align="center"><code class="literal">TEXT_VALUE_ID</code></td><td align="left">The actual text.</td></tr></tbody></table></div></div><br class="table-break"><p>As said in the first paragraph you won't deal with
+      <code class="literal">DifferenceEngine</code> directly in most cases.  In
+      cases where <code class="literal">Diff</code> or
+      <code class="literal">DetailedDiff</code> don't provide what you need
+      you'd create an instance of <code class="literal">DifferenceEngine</code>
+      passing a <code class="literal">ComparisonController</code> in the
+      constructor and invoke <code class="literal">compare</code> with your DOM
+      trees to compare as well as a
+      <code class="literal">DifferenceListener</code> and
+      <code class="literal">ElementQualifier</code>.  The listener will be
+      called on any differences while the <code class="literal">control</code>
+      method is executing.</p><div class="example"><a name="idp1327248"></a><p class="title"><b>Example 16. Using <code class="literal">DifferenceEngine</code>
+          Directly</b></p><div class="example-contents"><pre class="programlisting">
+class MyDifferenceListener implements DifferenceListener {
+    private boolean calledFlag = false;
+    public boolean called() { return calledFlag; }
+
+    public int differenceFound(Difference difference) {
+        calledFlag = true;
+        return RETURN_ACCEPT_DIFFERENCE;
+    }
+
+    public void skippedComparison(Node control, Node test) {
+    }
+}
+
+DifferenceEngine engine = new DifferenceEngine(myComparisonController);
+MyDifferenceListener listener = new MyDifferenceListener();
+engine.compare(controlNode, testNode, listener,
+               myElementQualifier);
+System.err.println("There have been "
+                   + (listener.called() ? "" : "no ")
+                   + "differences.");
+</pre></div></div><br class="example-break"></div><div class="section" title="3.2. ComparisonController"><div class="titlepage"><div><div><h3 class="title"><a name="ComparisonController"></a>3.2. <code class="literal">ComparisonController</code></h3></div></div></div><p>The <code class="literal">ComparisonController</code>'s job is to
+      decide whether a comparison should be halted after a difference
+      has been found.  Its interface is:</p><pre class="programlisting">
+    /**
+     * Determine whether a Difference that the listener has been notified of
+     *  should halt further XML comparison. Default behaviour for a Diff
+     *  instance is to halt if the Difference is not recoverable.
+     * @see Difference#isRecoverable
+     * @param afterDifference the last Difference passed to &lt;code&gt;differenceFound&lt;/code&gt;
+     * @return true to halt further comparison, false otherwise
+     */
+    boolean haltComparison(Difference afterDifference);
+</pre><p>Whenever a difference has been detected by the
+      <code class="literal">DifferenceEngine</code> the
+      <code class="literal">haltComparison</code> method will be called
+      immediately after the <code class="literal">DifferenceListener</code> has
+      been informed of the difference.  This is true no matter what
+      type of <code class="literal">Difference</code> has been found or which
+      value the <code class="literal">DifferenceListener</code> has
+      returned.</p><p>The only implementations of
+      <code class="literal">ComparisonController</code> that ship with XMLUnit
+      are <code class="literal">Diff</code> and <code class="literal">DetailedDiff</code>,
+      see <a class="xref" href="ar01s03.html#Diff" title="3.5. Diff and DetailedDiff">Section 3.5, &#8220;<code class="literal">Diff</code> and
+      <code class="literal">DetailedDiff</code>&#8221;</a> for details about them.</p><p>A <code class="literal">ComparisonController</code> that halted the
+      comparison on any non-recoverable difference could be
+      implemented as:</p><div class="example"><a name="idp1343184"></a><p class="title"><b>Example 17. A Simple
+          <code class="literal">ComparisonController</code></b></p><div class="example-contents"><pre class="programlisting">
+public class HaltOnNonRecoverable implements ComparisonController {
+    public boolean haltComparison(Difference afterDifference) {
+        return !afterDifference.isRecoverable();
+    }
+}
+</pre></div></div><br class="example-break"></div><div class="section" title="3.3. DifferenceListener"><div class="titlepage"><div><div><h3 class="title"><a name="DifferenceListener"></a>3.3. <code class="literal">DifferenceListener</code></h3></div></div></div><p><code class="literal">DifferenceListener</code> contains two
+      callback methods that are invoked by the
+      <code class="literal">DifferenceEngine</code> when differences are
+      detected:</p><pre class="programlisting">
+    /**
+     * Receive notification that 2 nodes are different.
+     * @param difference a Difference instance as defined in {@link
+     * DifferenceConstants DifferenceConstants} describing the cause
+     * of the difference and containing the detail of the nodes that
+     * differ
+     * @return int one of the RETURN_... constants describing how this
+     * difference was interpreted
+     */
+    int differenceFound(Difference difference);
+
+    /**
+     * Receive notification that a comparison between 2 nodes has been skipped
+     *  because the node types are not comparable by the DifferenceEngine
+     * @param control the control node being compared
+     * @param test the test node being compared
+     * @see DifferenceEngine
+     */
+    void skippedComparison(Node control, Node test);
+</pre><p><code class="literal">differenceFound</code> is invoked by
+      <code class="literal">DifferenceEngine</code> as soon as a difference has
+      been detected.  The return value of that method is completely
+      ignored by <code class="literal">DifferenceEngine</code>, it becomes
+      important when used together with <code class="literal">Diff</code>,
+      though (see <a class="xref" href="ar01s03.html#Diff" title="3.5. Diff and DetailedDiff">Section 3.5, &#8220;<code class="literal">Diff</code> and
+      <code class="literal">DetailedDiff</code>&#8221;</a>).  The return value should be
+      one of the four constants defined in the the
+      <code class="literal">DifferenceListener</code> interface:</p><pre class="programlisting">
+    /** 
+     * Standard return value for the &lt;code&gt;differenceFound&lt;/code&gt; method.
+     * Indicates that the &lt;code&gt;Difference&lt;/code&gt; is interpreted as defined 
+     * in {@link DifferenceConstants DifferenceConstants}.
+     */
+    int RETURN_ACCEPT_DIFFERENCE;
+    /** 
+     * Override return value for the &lt;code&gt;differenceFound&lt;/code&gt; method.
+     * Indicates that the nodes identified as being different should be 
+     * interpreted as being identical.
+     */
+    int RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL;
+    /** 
+     * Override return value for the &lt;code&gt;differenceFound&lt;/code&gt; method.
+     * Indicates that the nodes identified as being different should be 
+     * interpreted as being similar.
+     */
+    int RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
+    /** 
+     * Override return value for the &lt;code&gt;differenceFound&lt;/code&gt; method.
+     * Indicates that the nodes identified as being similar should be 
+     * interpreted as being different.
+     */
+    int RETURN_UPGRADE_DIFFERENCE_NODES_DIFFERENT = 3;
+</pre><p>The <code class="literal">skippedComparison</code> method is
+      invoked if the <code class="literal">DifferenceEngine</code> encounters
+      two <code class="literal">Node</code>s it cannot compare.  Before invoking
+      <code class="literal">skippedComparison</code>
+      <code class="literal">DifferenceEngine</code> will have invoked
+      <code class="literal">differenceFound</code> with a
+      <code class="literal">Difference</code> of type
+      <code class="literal">NODE_TYPE</code>.</p><p>A custom <code class="literal">DifferenceListener</code> that
+      ignored any DOCTYPE related differences could be written
+      as:</p><div class="example"><a name="idp1364720"></a><p class="title"><b>Example 18. A <code class="literal">DifferenceListener</code> that Ignores
+          DOCTYPE Differences</b></p><div class="example-contents"><pre class="programlisting">
+public class IgnoreDoctype implements DifferenceListener {
+    private static final int[] IGNORE = new int[] {
+        DifferenceConstants.HAS_DOCTYPE_DECLARATION_ID,
+        DifferenceConstants.DOCTYPE_NAME_ID,
+        DifferenceConstants.DOCTYPE_PUBLIC_ID_ID,
+        DifferenceConstants.DOCTYPE_SYSTEM_ID_ID
+    };
+
+    static {
+        Arrays.sort(IGNORE);
+    }
+
+    public int differenceFound(Difference difference) {
+        return Arrays.binarySearch(IGNORE, difference.getId()) &gt;= 0
+            ? RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL
+            : RETURN_ACCEPT_DIFFERENCE;
+    }
+    
+    public void skippedComparison(Node control, Node test) {
+    }
+}
+</pre></div></div><br class="example-break"><p>Apart from <code class="literal">Diff</code> and
+      <code class="literal">DetailedDiff</code> XMLUnit ships with an additional
+      implementation of <code class="literal">DifferenceListener</code>.</p><div class="section" title="3.3.1. IgnoreTextAndAttributeValuesDifferenceListener"><div class="titlepage"><div><div><h4 class="title"><a name="IgnoreTextAndAttributeValuesDifferenceListener"></a>3.3.1. <code class="literal">IgnoreTextAndAttributeValuesDifferenceListener</code></h4></div></div></div><p><code class="literal">IgnoreTextAndAttributeValuesDifferenceListener</code>
+        doesn't do anything in <code class="literal">skippedComparison</code>.
+        It "downgrades" <code class="literal">Difference</code>s of type
+        <code class="literal">ATTR_VALUE</code>,
+        <code class="literal">ATTR_VALUE_EXPLICITLY_SPECIFIED</code> and
+        <code class="literal">TEXT_VALUE</code> to recoverable
+        differences.</p><p>This means if instances of
+        <code class="literal">IgnoreTextAndAttributeValuesDifferenceListener</code>
+        are used together with <code class="literal">Diff</code> then two pieces
+        of XML will be considered similar if they have the same basic
+        structure.  They are not considered identical, though.</p><p>Note that the list of ignored differences doesn't cover
+        all textual differences.  You should configure XMLUnit to
+        ignore comments and whitespace and to consider CDATA sections
+        and text nodes to be the same (see <a class="xref" href="ar01s03.html#Comparing:%20Configuration" title="3.8. Configuration Options">Section 3.8, &#8220;Configuration Options&#8221;</a>) in order to cover
+        <code class="literal">COMMENT_VALUE</code> and
+        <code class="literal">CDATA_VALUE</code> as well.</p></div></div><div class="section" title="3.4. ElementQualifier"><div class="titlepage"><div><div><h3 class="title"><a name="ElementQualifier"></a>3.4. <code class="literal">ElementQualifier</code></h3></div></div></div><p>When <code class="literal">DifferenceEngine</code> encounters a list
+      of DOM <code class="literal">Element</code>s as children of another
+      <code class="literal">Element</code> it will ask the configured
+      <code class="literal">ElementQualifier</code> which
+      <code class="literal">Element</code> of the control piece of XML should be
+      compared to which of the test piece.  Its contract is:</p><pre class="programlisting">
+    /**
+     * Determine whether two elements are comparable
+     * @param control an Element from the control XML NodeList
+     * @param test an Element from the test XML NodeList
+     * @return true if the elements are comparable, false otherwise
+     */
+    boolean qualifyForComparison(Element control, Element test); 
+</pre><p>For any given <code class="literal">Element</code> in the control
+      piece of XML <code class="literal">DifferenceEngine</code> will cycle
+      through the corresponding list of <code class="literal">Element</code>s in
+      the test piece of XML until
+      <code class="literal">qualifyForComparison</code> has returned
+      <code class="literal">true</code> or the test document is
+      exhausted.</p><p>When using <code class="literal">DifferenceEngine</code> or
+      <code class="literal">Diff</code> it is completely legal to set the
+      <code class="literal">ElementQualifier</code> to <code class="literal">null</code>.
+      In this case any kind of <code class="literal">Node</code> is compared to
+      the test <code class="literal">Node</code> that appears at the same
+      position in the sequence.</p><div class="example"><a name="eq-nodelist-example"></a><p class="title"><b>Example 19. Example Nodes for <code class="literal">ElementQualifier</code>
+          (the comments are not part of the example)</b></p><div class="example-contents"><pre class="programlisting">
+&lt;!-- control piece of XML --&gt;
+&lt;parent&gt;
+  &lt;child1/&gt;                        &lt;!-- control node 1 --&gt;
+  &lt;child2/&gt;                        &lt;!-- control node 2 --&gt;
+  &lt;child2 foo="bar"&gt;xyzzy&lt;/child2&gt; &lt;!-- control node 3 --&gt;
+  &lt;child2 foo="baz"/&gt;              &lt;!-- control node 4 --&gt;
+&lt;/parent&gt;
+
+&lt;!-- test piece of XML --&gt;
+&lt;parent&gt;
+  &lt;child2 foo="baz"/&gt;              &lt;!-- test node 1 --&gt;
+  &lt;child1/&gt;                        &lt;!-- test node 2 --&gt;
+  &lt;child2&gt;xyzzy&lt;/child2&gt;           &lt;!-- test node 3 --&gt;
+  &lt;child2 foo="bar"/&gt;              &lt;!-- test node 4 --&gt;
+&lt;/parent&gt;
+</pre></div></div><br class="example-break"><p>Taking <a class="xref" href="ar01s03.html#eq-nodelist-example" title="Example 19. Example Nodes for ElementQualifier (the comments are not part of the example)">Example 19, &#8220;Example Nodes for <code class="literal">ElementQualifier</code>
+          (the comments are not part of the example)&#8221;</a> without any
+      <code class="literal">ElementQualifier</code>
+      <code class="literal">DifferenceEngine</code> will compare control node
+      <code class="literal">n</code> to test node <code class="literal">n</code> for
+      <code class="literal">n</code> between 1 and 4.  In many cases this is
+      exactly what is desired, but sometimes
+      <code class="literal">&lt;a&gt;&lt;b/&gt;&lt;c/&gt;&lt;/a&gt;</code> should be similar
+      to <code class="literal">&lt;a&gt;&lt;c/&gt;&lt;b/&gt;&lt;/a&gt;</code> because the
+      order of elements doesn't matter - this is when you'd use a
+      different <code class="literal">ElementQualifier</code>.  XMLUnit ships
+      with several implementations.</p><div class="section" title="3.4.1. ElementNameQualifier"><div class="titlepage"><div><div><h4 class="title"><a name="ElementNameQualifier"></a>3.4.1. <code class="literal">ElementNameQualifier</code></h4></div></div></div><p>Only <code class="literal">Element</code>s with the same name -
+        and Namespace URI if present - qualify.</p><p>In <a class="xref" href="ar01s03.html#eq-nodelist-example" title="Example 19. Example Nodes for ElementQualifier (the comments are not part of the example)">Example 19, &#8220;Example Nodes for <code class="literal">ElementQualifier</code>
+          (the comments are not part of the example)&#8221;</a> this means
+        control node 1 will be compared to test node 2.  Then control
+        node 2 will be compared to test node 3 because
+        <code class="literal">DifferenceEngine</code> will start to search for
+        the matching test <code class="literal">Element</code> at the second
+        test node, the same sequence number the control node is at.
+        Control node 3 is compared to test node 3 as well and control
+        node 4 to test node 4.</p></div><div class="section" title="3.4.2. ElementNameAndAttributeQualifier"><div class="titlepage"><div><div><h4 class="title"><a name="ElementNameAndAttributeQualifier"></a>3.4.2. <code class="literal">ElementNameAndAttributeQualifier</code></h4></div></div></div><p>Only <code class="literal">Element</code>s with the same name -
+        and Namespace URI if present - as well as the same values for
+        all attributes given in
+        <code class="literal">ElementNameAndAttributeQualifier</code>'s
+        constructor qualify.</p><p>Let's say <code class="literal">"foo"</code> has been passed to
+        <code class="literal">ElementNameAndAttributeQualifier</code>'s
+        constructor when looking at <a class="xref" href="ar01s03.html#eq-nodelist-example" title="Example 19. Example Nodes for ElementQualifier (the comments are not part of the example)">Example 19, &#8220;Example Nodes for <code class="literal">ElementQualifier</code>
+          (the comments are not part of the example)&#8221;</a>.  This again means control
+        node 1 will be compared to test node 2 since they do have the
+        same name and no value at all for attribute
+        <code class="literal">"foo"</code>.  Then control node 2 will be
+        compared to test node 3 - again, no value for
+        <code class="literal">"foo"</code>.  Control node 3 is compared to test
+        node 4 as they have the same value <code class="literal">"bar"</code>.
+        Finally control node 4 is compared to test node 1; here
+        <code class="literal">DifferenceEngine</code> searches from the
+        beginning of the test node list after test node 4 didn't
+        match.</p><p>There are three constructors in
+        <code class="literal">ElementNameAndAttributeQualifier</code>.  The
+        no-arg constructor creates an instance that compares all
+        attributes while the others will compare a single attribute or
+        a given subset of all attributes.</p></div><div class="section" title="3.4.3. ElementNameAndTextQualifier"><div class="titlepage"><div><div><h4 class="title"><a name="ElementNameAndTextQualifier"></a>3.4.3. <code class="literal">ElementNameAndTextQualifier</code></h4></div></div></div><p>Only <code class="literal">Element</code>s with the same name -
+        and Namespace URI if present - as well as the same text
+        content nested into them qualify.</p><p>In <a class="xref" href="ar01s03.html#eq-nodelist-example" title="Example 19. Example Nodes for ElementQualifier (the comments are not part of the example)">Example 19, &#8220;Example Nodes for <code class="literal">ElementQualifier</code>
+          (the comments are not part of the example)&#8221;</a> this means
+        control node 1 will be compared to test node 2 since they both
+        don't have any nested text at all.  Then control node 2 will
+        be compared to test node 4.  Control node 3 is compared to
+        test node 3 since they have the same nested text and control
+        node 4 to test node 4.</p></div><div class="section" title="3.4.4. org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier"><div class="titlepage"><div><div><h4 class="title"><a name="RecursiveElementNameAndTextQualifier"></a>3.4.4. <code class="literal">org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier</code></h4></div></div></div><p>All <code class="literal">ElementQualifier</code>s seen so far
+        only looked at the <code class="literal">Element</code>s themselves and
+        not at the structure nested into them at a deeper level.  A
+        frequent user question has been which
+        <code class="literal">ElementQualifier</code> should be used if the
+        pieces of XML in <a class="xref" href="ar01s03.html#htmltable" title="Example 20. Example for RecursiveElementNameAndTextQualifier (the comments are not part of the example)">Example 20, &#8220;Example for
+          <code class="literal">RecursiveElementNameAndTextQualifier</code>
+          (the comments are not part of the example)&#8221;</a> should be
+        considered similar.</p><div class="example"><a name="htmltable"></a><p class="title"><b>Example 20. Example for
+          <code class="literal">RecursiveElementNameAndTextQualifier</code>
+          (the comments are not part of the example)</b></p><div class="example-contents"><pre class="programlisting">
+&lt;!-- control --&gt;
+&lt;table&gt;
+  &lt;tr&gt;            &lt;!-- control row 1 --&gt;
+    &lt;td&gt;foo&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;            &lt;!-- control row 2 --&gt;
+    &lt;td&gt;bar&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;!-- test --&gt;
+&lt;table&gt;
+  &lt;tr&gt;            &lt;!-- test row 1 --&gt;
+    &lt;td&gt;bar&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;            &lt;!-- test row 2 --&gt;
+    &lt;td&gt;foo&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre></div></div><br class="example-break"><p>At first glance
+        <code class="literal">ElementNameAndTextQualifier</code> should work but
+        it doesn't.  When <code class="literal">DifferenceEngine</code>
+        processed the children of <code class="literal">table</code> it would
+        compare control row 1 to test row 1 since both
+        <code class="literal">tr</code> elements have the same name and both
+        have no textual content at all.</p><p>What is needed in this case is an
+        <code class="literal">ElementQualifier</code> that looks at the element's
+        name, as well as the name of the first child element and the
+        text nested into that first child element.  This is what
+        <code class="literal">RecursiveElementNameAndTextQualifier</code>
+        does.</p><p><code class="literal">RecursiveElementNameAndTextQualifier</code>
+        ignores whitespace between the elements leading up to the
+        nested text.</p></div><div class="section" title="3.4.5. org.custommonkey.xmlunit.examples.MultiLevelElementNameAndTextQualifier"><div class="titlepage"><div><div><h4 class="title"><a name="MultiLevelElementNameAndTextQualifier"></a>3.4.5. <code class="literal">org.custommonkey.xmlunit.examples.MultiLevelElementNameAndTextQualifier</code></h4></div></div></div><p>
+          <code class="literal">MultiLevelElementNameAndTextQualifier</code> has
+          in a way been the predecessor
+          of <a class="xref" href="ar01s03.html#RecursiveElementNameAndTextQualifier" title="3.4.4. org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier">Section 3.4.4, &#8220;<code class="literal">org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier</code>&#8221;</a>.
+          It also matches element names and those of nested child
+          elements until it finds matches, but
+          unlike <code class="literal">RecursiveElementNameAndTextQualifier</code>,
+          you must
+          tell <code class="literal">MultiLevelElementNameAndTextQualifier</code>
+          at which nesting level it should expect the nested text.
+        </p><p>
+          <code class="literal">MultiLevelElementNameAndTextQualifier</code>'s
+          constructor expects a single argument which is the nesting
+          level of the expected text.  If you use an argument of 1,
+          <code class="literal">MultiLevelElementNameAndTextQualifier</code> is
+          identical to <code class="literal">ElementNameAndTextQualifier</code>.
+          In <a class="xref" href="ar01s03.html#htmltable" title="Example 20. Example for RecursiveElementNameAndTextQualifier (the comments are not part of the example)">Example 20, &#8220;Example for
+          <code class="literal">RecursiveElementNameAndTextQualifier</code>
+          (the comments are not part of the example)&#8221;</a> a value of 2 would be
+          needed.</p><p>By default
+          <code class="literal">MultiLevelElementNameAndTextQualifier</code>
+          will not ignore whitespace between the elements leading up
+          to the nested text.  If your piece of XML contains this sort
+          of whitespace (like <a class="xref" href="ar01s03.html#htmltable" title="Example 20. Example for RecursiveElementNameAndTextQualifier (the comments are not part of the example)">Example 20, &#8220;Example for
+          <code class="literal">RecursiveElementNameAndTextQualifier</code>
+          (the comments are not part of the example)&#8221;</a> which
+          contains a newline and several space characters between
+          <code class="literal">&lt;tr&gt;</code> and
+          <code class="literal">&lt;td&gt;</code>) you can either instruct
+          XMLUnit to ignore whitespace completely (see
+          <a class="xref" href="ar01s03.html#Whitespace%20Handling" title="3.8.1. Whitespace Handling">Section 3.8.1, &#8220;Whitespace Handling&#8221;</a>) or use the two-arg
+          constructor of
+          <code class="literal">MultiLevelElementNameAndTextQualifier</code>
+          introduced with XMLUnit 1.2 and set the
+          <code class="literal">ignoreEmptyTexts</code> argument to
+          true.</p><p>In
+          general <code class="literal">RecursiveElementNameAndTextQualifier</code>
+          requires less knowledge upfront and its whitespace-handling
+          is more intuitive.</p></div></div><div class="section" title="3.5. Diff and DetailedDiff"><div class="titlepage"><div><div><h3 class="title"><a name="Diff"></a>3.5. <code class="literal">Diff</code> and
+      <code class="literal">DetailedDiff</code></h3></div></div></div><p><code class="literal">Diff</code> and
+      <code class="literal">DetailedDiff</code> provide simplified access to
+      <code class="literal">DifferenceEngine</code> by implementing the
+      <code class="literal">ComparisonController</code> and
+      <code class="literal">DifferenceListener</code> interfaces themselves.
+      They cover the two most common use cases for comparing two
+      pieces of XML: checking whether the pieces are different (this
+      is what <code class="literal">Diff</code> does) and finding all
+      differences between them (this is what
+      <code class="literal">DetailedDiff</code> does).</p><p><code class="literal">DetailedDiff</code> is a subclass of
+      <code class="literal">Diff</code> and can only be constructed by creating
+      a <code class="literal">Diff</code> instance first.</p><p>The major difference between them is their implementation
+      of the <code class="literal">ComparisonController</code> interface:
+      <code class="literal">DetailedDiff</code> will never stop the comparison
+      since it wants to collect all differences.
+      <code class="literal">Diff</code> in turn will halt the comparison as soon
+      as the first <code class="literal">Difference</code> is found that is not
+      recoverable.  In addition <code class="literal">DetailedDiff</code>
+      collects all <code class="literal">Difference</code>s in a list and
+      provides access to it.</p><p>By default <code class="literal">Diff</code> will consider two
+      pieces of XML as identical if no differences have been found at
+      all, similar if all differences that have been found have been
+      recoverable (see <a class="xref" href="ar01s03.html#docleveldiff" title="Table 1. Document level Differences detected by DifferenceEngine">Table 1, &#8220;Document level <code class="literal">Difference</code>s detected by
+        <code class="literal">DifferenceEngine</code>&#8221;</a> to <a class="xref" href="ar01s03.html#otherdiff" title="Table 4. Other Differences detected by DifferenceEngine">Table 4, &#8220;Other <code class="literal">Difference</code>s detected by
+        <code class="literal">DifferenceEngine</code>&#8221;</a>) and different as soon as any
+      non-recoverable difference has been found.</p><p>It is possible to specify a
+      <code class="literal">DifferenceListener</code> to <code class="literal">Diff</code>
+      using the <code class="literal">overrideDifferenceListener</code> method.
+      In this case each <code class="literal">Difference</code> will be
+      evaluated by the passed in
+      <code class="literal">DifferenceListener</code>.  By returning
+      <code class="literal">RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL</code> the
+      custom listener can make <code class="literal">Diff</code> ignore the
+      difference completely.  Likewise any
+      <code class="literal">Difference</code> for which the custom listener
+      returns
+      <code class="literal">RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR</code> will
+      be treated as if the <code class="literal">Difference</code> was
+      recoverable.</p><p>There are several overloads of the <code class="literal">Diff</code>
+      constructor that allow you to specify your piece of XML in many
+      ways.  There are overloads that accept additional
+      <code class="literal">DifferenceEngine</code> and
+      <code class="literal">ElementQualifier</code> arguments.  Passing in a
+      <code class="literal">DifferenceEngine</code> of your own is the only way
+      to use a <code class="literal">ComparisonController</code> other than
+      <code class="literal">Diff</code>.</p><p>Note that <code class="literal">Diff</code> and
+      <code class="literal">DetailedDiff</code> use
+      <code class="literal">ElementNameQualifier</code> as their default
+      <code class="literal">ElementQualifier</code>.  This is different from
+      <code class="literal">DifferenceEngine</code> which defaults to no
+      <code class="literal">ElementQualifier</code> at all.</p><p>To use a custom <code class="literal">ElementQualifier</code> you
+      can also use the <code class="literal">overrideElementQualifier</code>
+      method.  Use this with an argument of <code class="literal">null</code> to
+      unset the default <code class="literal">ElementQualifier</code> as
+      well.</p><p>To compare two pieces of XML you'd create a
+      <code class="literal">Diff</code> instance from those two pieces and
+      invoke <code class="literal">identical</code> to check that there have
+      been no differences at all and <code class="literal">similar</code> to
+      check that any difference, if any, has been recoverable.  If the
+      pieces are identical they are also similar.  Likewise if they
+      are not similar they can't be identical either.</p><div class="example"><a name="idp1501488"></a><p class="title"><b>Example 21. Comparing Two Pieces of XML Using
+        <code class="literal">Diff</code></b></p><div class="example-contents"><pre class="programlisting">
+Diff d = new Diff("&lt;a&gt;&lt;b/&gt;&lt;c/&gt;&lt;/a&gt;", "&lt;a&gt;&lt;c/&gt;&lt;b/&gt;&lt;/a&gt;");
+assertFalse(d.identical()); // CHILD_NODELIST_SEQUENCE Difference
+assertTrue(d.similar());
+</pre></div></div><br class="example-break"><p>The result of the comparison is cached in
+      <code class="literal">Diff</code>, repeated invocations of
+      <code class="literal">identical</code> or <code class="literal">similar</code> will
+      not reevaluate the pieces of XML.</p><p><code class="literal">DetailedDiff</code> provides only a single
+      constructor that expects a <code class="literal">Diff</code> as argument.
+      Don't use <code class="literal">DetailedDiff</code> if all you need to
+      know is whether two pieces of XML are identical/similar - use
+      <code class="literal">Diff</code> directly since its short-cut
+      <code class="literal">ComparisonController</code> implementation will save
+      time in this case.</p><div class="example"><a name="idp1510560"></a><p class="title"><b>Example 22. Finding All Differences Using
+        <code class="literal">DetailedDiff</code></b></p><div class="example-contents"><pre class="programlisting">
+Diff d = new Diff("&lt;a&gt;&lt;b/&gt;&lt;c/&gt;&lt;/a&gt;", "&lt;a&gt;&lt;c/&gt;&lt;b/&gt;&lt;/a&gt;");
+DetailedDiff dd = new DetailedDiff(d);
+dd.overrideElementQualifier(null);
+assertFalse(dd.similar());
+List l = dd.getAllDifferences();
+assertEquals(2, l.size()); // expected &lt;b/&gt; but was &lt;c/&gt; and vice versa
+</pre></div></div><br class="example-break"></div><div class="section" title="3.6. MatchTracker"><div class="titlepage"><div><div><h3 class="title"><a name="MatchTracker"></a>3.6. <code class="literal">MatchTracker</code></h3></div></div></div><p>Sometimes you might be interested in any sort of
+      comparison result and want to get notified of successful matches
+      as well.  Maybe you want to provide feedback on the amount of
+      differences and similarities between two documents, for
+      example.</p><p>The interface <code class="literal">MatchTracker</code> can be
+      implemented to get notified on each and every successful match,
+      note that there may be a lot more comparisons going on than you
+      might expect and that your callback gets notified a lot.</p><div class="example"><a name="idp1516592"></a><p class="title"><b>Example 23. The <code class="literal">MatchTracker</code> interface</b></p><div class="example-contents"><pre class="programlisting">
+package org.custommonkey.xmlunit;
+
+/**
+ * Listener for callbacks from a {@link DifferenceEngine#compare
+ * DifferenceEngine comparison} that is notified on each and every
+ * comparision that resulted in a match.
+ */
+public interface MatchTracker {
+    /**
+     * Receive notification that 2 match.
+     * @param match a Difference instance as defined in {@link
+     * DifferenceConstants DifferenceConstants} describing the test
+     * that matched and containing the detail of the nodes that have
+     * been compared
+     */
+    void matchFound(Difference difference);
+}
+</pre></div></div><br class="example-break"><p>Despite its name the <code class="literal">Difference</code>
+        instance passed into the <code class="literal">matchFound</code> method
+        really describes a match and not a difference.  You can expect
+        that the <code class="literal">getValue</code> method on both the
+        control and the test <code class="literal">NodeDetail</code> will be
+        equal.</p><p><code class="literal">DifferenceEngine</code> provides a constructor
+        overload that allows you to pass in
+        a <code class="literal">MatchTracker</code> instance and also provides
+        a <code class="literal">setMatchTracker</code>
+        method.  <code class="literal">Diff</code>
+        and <code class="literal">DetailedDiff</code>
+        provide <code class="literal">overrideMatchTracker</code> methods that
+        fill the same purpose.</p><p>Note that your <code class="literal">MatchTracker</code> won't
+        receive any callbacks once the
+        configured <code class="literal">ComparisonController</code> has decided
+        that <code class="literal">DifferenceEngine</code> should halt the
+        comparison.</p></div><div class="section" title="3.7. JUnit 3.x Convenience Methods"><div class="titlepage"><div><div><h3 class="title"><a name="Comparing:%20JUnit%203"></a>3.7. JUnit 3.x Convenience Methods</h3></div></div></div><p><code class="literal">XMLAssert</code> and
+      <code class="literal">XMLTestCase</code> contain quite a few overloads of
+      methods for comparing two pieces of XML.</p><p>The method's names use the word <code class="literal">Equal</code>
+      to mean the same as <code class="literal">similar</code> in the
+      <code class="literal">Diff</code> class (or throughout this guide).  So
+      <code class="literal">assertXMLEqual</code> will assert that only
+      recoverable differences have been encountered where
+      <code class="literal">assertXMLNotEqual</code> asserts that some
+      differences have been non-recoverable.
+      <code class="literal">assertXMLIdentical</code> asserts that there haven't
+      been any differences at all while
+      <code class="literal">assertXMLNotIdentical</code> asserts that there have
+      been differences (recoverable or not).</p><p>Most of the overloads of <code class="literal">assertXMLEqual</code>
+      just provide different means to specify the pieces of XML as
+      <code class="literal">String</code>s, <code class="literal">InputSource</code>s,
+      <code class="literal">Reader</code>s<sup>[<a name="idp1542192" href="#ftn.idp1542192" class="footnote">7</a>]</sup> or <code class="literal">Document</code>s.  For each
+      method there is a version that takes an additional
+      <code class="literal">err</code> argument which is used to create the
+      message if the assertion fails.</p><p>If you don't need any control over the
+      <code class="literal">ElementQualifier</code> or
+      <code class="literal">DifferenceListener</code> used by
+      <code class="literal">Diff</code> these methods will save some boilerplate
+      code.  If <code class="literal">CONTROL</code> and <code class="literal">TEST</code>
+      are pieces of XML represented as one of the supported inputs
+      then</p><pre class="programlisting">
+Diff d = new Diff(CONTROL, TEST);
+assertTrue("expected pieces to be similar, " + d.toString(),
+           d.similar());
+</pre><p>and</p><pre class="programlisting">
+assertXMLEqual("expected pieces to be similar", CONTROL, TEST);
+</pre><p>are equivalent.</p><p>If you need more control over the <code class="literal">Diff</code>
+      instance there is a version of <code class="literal">assertXMLEqual</code>
+      (and <code class="literal">assertXMLIdentical</code>) that accepts a
+      <code class="literal">Diff</code> instance as its argument as well as a
+      <code class="literal">boolean</code> indicating whether you expect the
+      <code class="literal">Diff</code> to be <code class="literal">similar</code>
+      (<code class="literal">identical</code>) or not.</p><p><code class="literal">XMLTestCase</code> contains a couple of
+      <code class="literal">compareXML</code> methods that really are only
+      shortcuts to <code class="literal">Diff</code>'s constructors.</p><p>There is no way to use <code class="literal">DifferenceEngine</code>
+      or <code class="literal">DetailedDiff</code> directly via the convenience
+      methods.</p></div><div class="section" title="3.8. Configuration Options"><div class="titlepage"><div><div><h3 class="title"><a name="Comparing:%20Configuration"></a>3.8. Configuration Options</h3></div></div></div><p>Unless you are using <code class="literal">Document</code> or
+      <code class="literal">DOMSource</code> overrides when specifying your
+      pieces of XML, XMLUnit will use the configured XML parsers (see
+      <a class="xref" href="ar01s02.html#JAXP" title="2.4.1. JAXP">Section 2.4.1, &#8220;JAXP&#8221;</a>) and <code class="literal">EntityResolver</code>s
+      (see <a class="xref" href="ar01s02.html#EntityResolver" title="2.4.2. EntityResolver">Section 2.4.2, &#8220;<code class="literal">EntityResolver</code>&#8221;</a>).  There are configuration
+      options to use different settings for the control and test
+      pieces of XML.</p><p>In addition some of the other configuration settings may
+      lead to XMLUnit using the configured XSLT transformer (see <a class="xref" href="ar01s02.html#JAXP" title="2.4.1. JAXP">Section 2.4.1, &#8220;JAXP&#8221;</a>) under the covers.</p><div class="section" title="3.8.1. Whitespace Handling"><div class="titlepage"><div><div><h4 class="title"><a name="Whitespace%20Handling"></a>3.8.1. Whitespace Handling</h4></div></div></div><p>Two different configuration options affect how XMLUnit
+        treats whitespace in comparisons:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">Element Content Whitespace (see <a class="xref" href="ar01s02.html#Basic:%20Element%20Content%20Whitespace" title="2.4.3. Element Content Whitespace">Section 2.4.3, &#8220;Element Content Whitespace&#8221;</a>)
+
+            <p>If XMLUnit has been configured to ignore element
+            content whitespace it will trim any text nodes found by
+            the parser.  This means that there won't appear to be any
+            textual content in element <code class="literal">&lt;foo&gt;</code>
+            for the following example.  If you don't set
+            <code class="literal">XMLUnit.setIgnoreWhitespace</code> there would
+            be textual content consisting of a new line
+            character.</p><pre class="programlisting">
+&lt;foo&gt;
+&lt;/foo&gt;
+</pre><p>At the same time the following two
+            <code class="literal">&lt;foo&gt;</code> elements will be considered
+            identical if the option has been enabled, though.</p><pre class="programlisting">
+&lt;foo&gt;bar&lt;/foo&gt;
+&lt;foo&gt; bar &lt;/foo&gt;
+</pre><p>When this option is set to <code class="literal">true</code>,
+            <code class="literal">Diff</code> will use the XSLT transformer
+            under the covers.</p></li><li class="listitem">"Normalizing" Whitespace
+
+            <p>If you set
+            <code class="literal">XMLUnit.setNormalizeWhitespace</code> to true
+            then XMLUnit will replace any kind of whitespace found in
+            character content with a SPACE character and collapse
+            consecutive whitespace characters to a single SPACE.  It
+            will also trim the resulting character content on both
+            ends.</p><p>The following two <code class="literal">&lt;foo&gt;</code>
+            elements will be considered identical if the option has
+            been set:</p><pre class="programlisting">
+&lt;foo&gt;bar baz&lt;/foo&gt;
+&lt;foo&gt; bar
+            baz&lt;/foo&gt;
+</pre><p>Note that this is not related to "normalizing" the
+            document as a whole (see <a class="xref" href="ar01s03.html#Normalizing%20Documents" title='3.8.2. "Normalizing" Documents'>Section 3.8.2, &#8220;"Normalizing" <code class="literal">Document</code>s&#8221;</a>).</p></li></ul></div></div><div class="section" title='3.8.2. "Normalizing" Documents'><div class="titlepage"><div><div><h4 class="title"><a name="Normalizing%20Documents"></a>3.8.2. "Normalizing" <code class="literal">Document</code>s</h4></div></div></div><p>"Normalize" in this context corresponds to the
+        <code class="literal">normalize</code> method in DOM's
+        <code class="literal">Document</code> class.  It is the process of
+        merging adjacent <code class="literal">Text</code> nodes and is not
+        related to "normalizing whitespace" as described in the
+        previous section.</p><p>Usually you don't need to care about this option since
+        the XML parser is required to normalize the
+        <code class="literal">Document</code> when creating it.  The only reason
+        you may want to change the option via
+        <code class="literal">XMLUnit.setNormalize</code> is that your
+        <code class="literal">Document</code> instances have not been created by
+        an XML parser but rather been put together in memory using the
+        DOM API directly.</p></div><div class="section" title="3.8.3. Ignoring Comments"><div class="titlepage"><div><div><h4 class="title"><a name="Ignoring%20Comments"></a>3.8.3. Ignoring Comments</h4></div></div></div><p>Using <code class="literal">XMLUnit.setIgnoreComments</code> you
+        can make XMLUnit's difference engine ignore comments
+        completely.</p><p>When this option is set to <code class="literal">true</code>,
+        <code class="literal">Diff</code> will use the XSLT transformer under
+        the covers.</p></div><div class="section" title="3.8.4. Treating CDATA Sections and Text Nodes Alike"><div class="titlepage"><div><div><h4 class="title"><a name="Treating%20CDATA%20Sections%20and%20Text%20Nodes%20Alike"></a>3.8.4. Treating CDATA Sections and Text Nodes Alike</h4></div></div></div><p>It is not always necessary to know whether a text has
+        been put into a CDATA section or not.  Using
+        <code class="literal">XMLUnit.setIgnoreDiffBetweenTextAndCDATA</code>
+        you can make XMLUnit consider the following two pieces of XML
+        identical:</p><pre class="programlisting">
+&lt;foo&gt;&amp;lt;bar&amp;gt;&lt;/foo&gt;
+</pre><pre class="programlisting">
+&lt;foo&gt;&lt;![CDATA[&lt;bar&gt;]]&gt;&lt;/foo&gt;
+</pre></div><div class="section" title="3.8.5. Entity Reference Expansion"><div class="titlepage"><div><div><h4 class="title"><a name="Entity%20Reference%20Expansion"></a>3.8.5. Entity Reference Expansion</h4></div></div></div><p>Normally the XML parser will expand character references
+        to their Unicode equivalents but for more complex entity
+        definitions the parser may expand them or not.
+        Using <code class="literal">XMLUnit.setExpandEntityReferences</code> you
+        can control the parser's setting.</p></div><div class="section" title="3.8.6. Comparison of Unmatched Elements"><div class="titlepage"><div><div><h4 class="title"><a name="Comparison%20of%20Unmatched%20Elements"></a>3.8.6. Comparison of Unmatched Elements</h4></div></div></div><p>When XMLUnit cannot match a control Element to a test
+          Element (the configured ElementQualifier - see
+          <a class="xref" href="ar01s03.html#ElementQualifier" title="3.4. ElementQualifier">Section 3.4, &#8220;<code class="literal">ElementQualifier</code>&#8221;</a> - doesn't return true for
+          any of the test Elements) it will try to compare it against
+          the first unmatched test Element (if there is one).
+          Starting with XMLUnit 1.3 one can
+          use <code class="literal">XMLUnit.setCompareUnmatched</code> to
+          disable this behavior and
+          generate <code class="literal">CHILD_NODE_NOT_FOUND</code> differences
+          instead.</p><p>If the control document is
+        </p><pre class="programlisting">
+&lt;root&gt;
+  &lt;a/&gt;
+&lt;/root&gt;
+</pre><p>
+        and the test document is
+        </p><pre class="programlisting">
+&lt;root&gt;
+  &lt;b/&gt;
+&lt;/root&gt;
+</pre><p>
+
+        the default setting will create a
+        single <code class="literal">ELEMENT_TAG_NAME</code> Difference
+        ("expected a but found b").
+        Setting <code class="literal">XMLUnit.setCompareUnmatched</code> to
+        false will create two Differences of
+        type <code class="literal">CHILD_NODE_NOT_FOUND</code> (one for "a" and
+        one for "b") instead.</p></div></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a id="ftn.idp1542192" href="#idp1542192" class="para">7</a>] </sup>See <a class="xref" href="ar01s02.html#Providing%20Input%20to%20XMLUnit" title="2.5. Providing Input to XMLUnit">Section 2.5, &#8220;Providing Input to XMLUnit&#8221;</a> for some advice on choosing your input
+      format.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2. Using XMLUnit </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 4. Validating XML Documents</td></tr></table></div></body></html>
