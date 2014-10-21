@@ -117,4 +117,4 @@ Produces an XML file named test.xml that only contains the products with “Rich
 
 ---
 
-### Further Instructions in Attached PDF
+### Further Instructions in [Attached PDF](https://github.com/LenPayne/CPD3314-Project/blob/master/CPD3314%20Data%20Project%20Instructions.pdf)
