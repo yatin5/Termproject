@@ -1,4 +1,4 @@
-# CPD3314 Final Project ñ Data API
+# CPD3314 Final Project ‚Äì Data API
 
 Build the Following Project and Submit to Dropbox on or before Nov. 29th, 2014
 
@@ -17,8 +17,8 @@ When built and run on the command line (eg- java CPD3314-Project ... ) the proje
 
 Command Argument                   | Result
 -----------------------------------|---------------------------
-`-format=<XML&#124;JSON&#124;YAML&#124;SQL&#124;HTML>` | Formats the output as appropriate: XML, JSON, YAML, SQL, or HTML. If excluded, default is XML.
-`-sort=<A&#124;I&#124;D>`                              | Sorts the output (A)lphabetically by Name, by (I)D, or by (D)ate. If excluded, default is to preserve the source ordering.
+`-format=<XML/JSON/YAML/SQL/HTML>` | Formats the output as appropriate: XML, JSON, YAML, SQL, or HTML. If excluded, default is XML.
+`-sort=<A/I/D>`                              | Sorts the output (A)lphabetically by Name, by (I)D, or by (D)ate. If excluded, default is to preserve the source ordering.
 `-limit=<#>`                       | Limits the output to a certain number of lines. Performed last (ie- after sorting and filtering).
 `-getID=<ID>`                      | Retrieves a single result by its ID.
 `-getDate=<DATE>`                  | Retrieves all results that match a given date.
@@ -33,88 +33,88 @@ Produces an XML file named CPD3314.xml of all products, with no particular sorti
 
 ---
 
-`java CPD3314-Project ñformat=XML`
+`java CPD3314-Project ‚Äìformat=XML`
 
 Produces an XML file named CPD3314.xml of all products, with no particular sorting
 
 ---
 
-`java CPD3314-Project ñformat=YAML`
+`java CPD3314-Project ‚Äìformat=YAML`
 
 Produces a YAML file named CPD3314.yaml of all products, with no particular sorting
 
 ---
 
-`java CPD3314-Project ñformat=JSON`
+`java CPD3314-Project ‚Äìformat=JSON`
 
 Produces a JSON file named CPD3314.json of all products, with no particular sorting
 
 ---
 
-`java CPD3314-Project ñformat=SQL`
+`java CPD3314-Project ‚Äìformat=SQL`
 
 Produces an SQL file named CPD3314.sql of all products, with no particular sorting
 
 ---
 
-`java CPD3314-Project ñformat=HTML`
+`java CPD3314-Project ‚Äìformat=HTML`
 
 Produces an HTML file named CPD3314.html of all products, with no particular sorting
 
 ---
 
-`java CPD3314-Project ño=test`
+`java CPD3314-Project ‚Äìo=test`
 
 Produces an XML file named test.xml of all products, with no particular sorting
 
 ---
 
-`java CPD3314-Project ño=ten ñlimit=10`
+`java CPD3314-Project ‚Äìo=ten ‚Äìlimit=10`
 
 Produces an XML file named ten.xml of the first ten products, with no particular sorting
 
 ---
 
-`java CPD3314-Project ñsort=A ño=test ñlimit=10`
+`java CPD3314-Project ‚Äìsort=A ‚Äìo=test ‚Äìlimit=10`
 
 Produces an XML file named test.xml of the first ten products, sorted by name ascending
 
 ---
 
-`java CPD3314-Project ñsort=I ño=test ñlimit=10`
+`java CPD3314-Project ‚Äìsort=I ‚Äìo=test ‚Äìlimit=10`
 
 Produces an XML file named test.xml of the first ten products, sorted by ID ascending
 
 ---
 
-`java CPD3314-Project ñsort=D ño=test ñlimit=10`
+`java CPD3314-Project ‚Äìsort=D ‚Äìo=test ‚Äìlimit=10`
 
 Produces an XML file named test.xml of the first ten products, sorted by date ascending
 
 ---
 
-`java CPD3314-Project ñgetID=400 ño=test`
+`java CPD3314-Project ‚ÄìgetID=400 ‚Äìo=test`
 
 Produces an XML file named test.xml that only contains the product with ID 400
 
 ---
 
-`java CPD3314-Project ñgetDate=2014-08-14 ño=test`
+`java CPD3314-Project ‚ÄìgetDate=2014-08-14 ‚Äìo=test`
 
 Produces an XML file named test.xml that only contains the products added on Aug. 14, 2014
 
 ---
 
-`java CPD3314-Project ñfind=Desk ño=test`
+`java CPD3314-Project ‚Äìfind=Desk ‚Äìo=test`
 
-Produces an XML file named test.xml that only contains the products with ìDeskî in their name or description
-
----
-
-`java CPD3314-Project ñfind=îRich Mahogany Deskî ño=test`
-
-Produces an XML file named test.xml that only contains the products with ìRich Mahogany Deskî in their name or description
+Produces an XML file named test.xml that only contains the products with ‚ÄúDesk‚Äù in their name or description
 
 ---
 
-### Further Instructions in Attached PDF
+`java CPD3314-Project ‚Äìfind=‚ÄùRich Mahogany Desk‚Äù ‚Äìo=test`
+
+Produces an XML file named test.xml that only contains the products with ‚ÄúRich Mahogany Desk‚Äù in their name or description
+
+---
+
+### Further Instructions in [Attached PDF](https://github.com/LenPayne/CPD3314-Project/blob/master/CPD3314%20Data%20Project%20Instructions.pdf)
