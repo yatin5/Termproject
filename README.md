@@ -1,6 +1,6 @@
 # CPD3314 Final Project – Data API
 
-Build the Following Project and Submit to Dropbox on or before Nov. 29th, 2014
+Build the Following Project and Submit to Dropbox on or before Apr. 16th, 2015
 
 Your employers have a set of product records that are stored as an XML-formatted dataset. They have been given to you as ORIGINALS.xml. In a flash of foresight, your employer realized that many modern tools prefer other data formats including JSON and YAML. In addition, they would like a tool that formats all of the data into SQL statements, and another tool that formats all of the data into HTML blocks.
 There are many ways to implement this, but your lead developer pointed you in the direction of the following tools:
@@ -99,9 +99,9 @@ Produces an XML file named test.xml that only contains the product with ID 400
 
 ---
 
-`java CPD3314-Project –getDate=2014-08-14 –o=test`
+`java CPD3314-Project –getDate=2015-06-14 –o=test`
 
-Produces an XML file named test.xml that only contains the products added on Aug. 14, 2014
+Produces an XML file named test.xml that only contains the products added on Jun. 14, 2015
 
 ---
 
@@ -117,4 +117,4 @@ Produces an XML file named test.xml that only contains the products with “Rich
 
 ---
 
-### Further Instructions in [Attached PDF](https://github.com/LenPayne/CPD3314-Project/blob/master/CPD3314%20Data%20Project%20Instructions.pdf)
+### Further Instructions in [Attached PDF](https://github.com/ProfRussell/CPD3314-Project/blob/master/CPD3314%20Data%20Project%20Instructions.pdf)
