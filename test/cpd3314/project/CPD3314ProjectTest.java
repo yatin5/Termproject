@@ -258,7 +258,7 @@ public class CPD3314ProjectTest {
     @Test
     public void testGetDateAndOutput() throws Exception {
         System.out.println("main");
-        String[] args = {"-getDate=2013-02-09", "-o=byDate"};
+        String[] args = {"-getDate=2014-02-09", "-o=byDate"};
         CPD3314Project.main(args);
         File expected = FileSystems.getDefault().getPath("testFiles", "getDate.xml").toFile();
         File result = new File("byDate.xml");
