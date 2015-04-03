@@ -58,19 +58,14 @@ public class CPD3314Project {
                         html(ProductList);
                         /* function to convert to html */
                     default: 
-                        /* nothing happens command needs to be reentered */
-                        
-                            
+                        /* nothing happens command needs to be reentered */            
                 }
             }
             else if(splitcommand[0].equals("-o"))
             {
                String filename=splitcommand[1];
-               /* function which creates a file name filename with all xml data in it without any sorting */
-               
-            }
-            
-            
+               /* function which creates a file name filename with all xml data in it without any sorting */ 
+            }   
         }
         else if(length==2)
         {
@@ -85,38 +80,27 @@ public class CPD3314Project {
                 int records=Integer.parseInt(numberofrecords);
                 limitrecords(ProductList, filename, records);
                 /* a function which accepts the filename and records as arguments and create a file with 
-               records in it named filename*/
-                
-                
+               records in it named filename*/   
             }
-            else if(splitcommand[0].equals("-getID"))
-                    {
-                        //System.out.println("dsfsdffdsfsfsd");
-                         String recordvalue=splitcommand[1];
-                         int record=Integer.parseInt(recordvalue);
+        else if(splitcommand[0].equals("-getID"))
+             {
+                String recordvalue=splitcommand[1];
+                int record=Integer.parseInt(recordvalue);
                 String filename=args[1];
                 String splitfilename[]=filename.split("=");
                 String filetobecreated=splitfilename[1];
                 selectedrecord(ProductList, filetobecreated, record);
                 /* a function which accets the record int value and file name and create a file with only that record init */
-                
-                
-                        
-                
-                     }
-            else if(splitcommand[0].equals("-getDate"))
+              }
+        else if(splitcommand[0].equals("-getDate"))
             {
                 String datestring=splitcommand[1];
-                //DateFormat format = new SimpleDateFormat("yyyy-mmmm-d", Locale.ENGLISH);
-                //Date dateofrecord=format.parse(datestring);
                 String filename=args[1];
                 String splitfilename[]=filename.split("=");
                 String filetobecreated=splitfilename[1];
-                selectedrecordondate(ProductList, filetobecreated, datestring);
-                
-               
+                selectedrecordondate(ProductList, filetobecreated, datestring); 
             }
-            else if(splitcommand[0].equals("-find"))
+        else if(splitcommand[0].equals("-find"))
             {
                 String find=splitcommand[1];
                 find=find.replace("","");
@@ -124,8 +108,7 @@ public class CPD3314Project {
                 String splitfilename[]=filename.split("=");
                 String filetobecreated=splitfilename[1];
                 selectedrecordondata(ProductList, filetobecreated, find);
-                /* function which eccept a string find and find it in the discription or name and make a new file named file*/
-                
+                /* function which eccept a string find and find it in the discription or name and make a new file named file*/         
             }
         }
         
@@ -150,9 +133,7 @@ public class CPD3314Project {
                 Collections.sort(ProductList, Product.getByName());
                 sortbyname(ProductList, filename, records);
                 /* a function which accepts the filename and records as arguments and create a file with 
-               records in it named filename*/
-                
-                
+               records in it named filename*/    
             }
         }
 
@@ -216,7 +197,7 @@ public class CPD3314Project {
         }
         file.close();
     }
-    public static void limitedrecords(List<Product> ProductList, String file, int record) throws FileNotFoundException
+    public static void limitrecords(List<Product> ProductList, String file, int record) throws FileNotFoundException
     {
          PrintWriter newfile;
         newfile = new PrintWriter(file+".xml");
