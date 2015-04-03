@@ -40,15 +40,15 @@ public class Product {
     public Product()
     {}
     
-    public int getid()
+    public int getId()
     {
         return id;
     }
-    public String getname()
+    public String getName()
     {
         return name;
     }
-    public String getdescription()
+    public String getDescription()
     {
         return description;
     }
@@ -56,27 +56,27 @@ public class Product {
     {
         return Quantity;
     }
-    public String getdateAdded()
+    public String getDateAdded()
     {
         return dateAdded;
     }
-    public void setid(int id)
+    public void setId(int id)
     {
         this.id = id;
     }
-    public void setname(String name)
+    public void setName(String name)
     {
         this.name=name;
     }
-    public void setdescription(String description)
+    public void setDescription(String description)
     {
         this.description= description;
     }
-    public void setquantitity(int quatity)
+    public void setQuantity(int quatity)
     {
         this.Quantity=quatity;
     }
-    public void setdateAdded(String dateAdded)
+    public void setDateAdded(String dateAdded)
     {
         this.dateAdded=dateAdded;
     }
@@ -84,23 +84,23 @@ public class Product {
     public String toXML()
     {
         String xml="<product>\n" 
-                    + "<id>" +getid()+"</id>\n" +"<name>"+getname()+"</nmae>\n"+"<description>"+getdescription()+"</description>\n"+"<Quantity>"+getQuantity()+"</Quantity>\n"+"<dateAdded>"+getdateAdded()+"</dateAdded>\n"
+                    + "<id>" +getId()+"</id>\n" +"<name>"+getName()+"</nmae>\n"+"<description>"+getDescription()+"</description>\n"+"<Quantity>"+getQuantity()+"</Quantity>\n"+"<dateAdded>"+getDateAdded()+"</dateAdded>\n"
                    +"</product>";
         return xml;        
     }
     public String toSQL()
     {
-      String sql="INSERT INTO Products VALUES("+getid()+", \""+getname()+", \""+getdescription()+", \""+getQuantity()+", \""+getdateAdded()+"\");";
+      String sql="INSERT INTO Products VALUES("+getId()+", \""+getName()+", \""+getDescription()+", \""+getQuantity()+", \""+getDateAdded()+"\");";
       return sql;
     }
     public String toHTML()
     {
         String html= "<div class=\"product\">\n"
-                    +"<h1>"+getname()+"</h1>\n"
-                    +"<p>"+getid()+"</p>\n"
-                    +"<p>"+getdescription()+"</p>\n"
+                    +"<h1>"+getName()+"</h1>\n"
+                    +"<p>"+getId()+"</p>\n"
+                    +"<p>"+getDescription()+"</p>\n"
                     +"<p>"+getQuantity()+"</p>\n"
-                    +"<p>"+getdateAdded()+"</p>\n"
+                    +"<p>"+getDateAdded()+"</p>\n"
                     +"</div>";
         return html;
     }
@@ -108,20 +108,20 @@ public class Product {
     {
         Map jobj = (Map) new LinkedHasMap();
             jobj.put("Quantity", getQuantity());
-            jobj.put("name", getname());
-            jobj.put("description", getdescription());
-            jobj.put("id", getid());
-            jobj.put("dateAdded", getdateAdded());
+            jobj.put("name", getName());
+            jobj.put("description", getDescription());
+            jobj.put("id", getId());
+            jobj.put("dateAdded", getDateAdded());
         
             String json=JSONValue.toJSONString(jobj);
          return json;
     }
     public String toYAML() {
         Map<String, Object> yamlmap=new HashMap<String, Object>();
-            yamlmap.put("dateAdded", getdateAdded());
-            yamlmap.put("description", getdescription());
-            yamlmap.put("id", getid());
-            yamlmap.put("name", getname());
+            yamlmap.put("dateAdded", getDateAdded());
+            yamlmap.put("description", getDescription());
+            yamlmap.put("id", getId());
+            yamlmap.put("name", getName());
             yamlmap.put("quantity", getQuantity());
             
         Yaml obj= new Yaml();
@@ -130,16 +130,22 @@ public class Product {
      return yaml;
     }
     
-private static Comparator<Product> ZToAByName() 
+static Comparator<Product> getByName() 
 {
  Comparator comp = new Comparator<Product>()
  {
 @Override
 public int compare(Product s1, Product s2)
 {
- return (s2.getname().compareTo(s1.getname()));
+ return (s2.getName().compareTo(s1.getName()));
 }
  }; 
     return comp;
 }
+
+    private static class LinkedHasMap {
+
+        public LinkedHasMap() {
+        }
+    }
 }

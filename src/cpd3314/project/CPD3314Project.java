@@ -40,14 +40,14 @@ public class CPD3314Project {
                 {
                     case "XML" :
                         xml(ProductList);
-                       // Product p=new Product();
-                        //p.readxml();
                         /* function to convert to xml */
                         break;
                     case "YAML" :
+                        yaml(ProductList);
                         /*function to convert to yaml */
                         break;
                     case "JSON" :
+                        json(ProductList);
                         /* function to convert to JSON */
                         break;
                     case "SQL" :
@@ -217,7 +217,7 @@ public class CPD3314Project {
         newfile.println("<products>");
         for(int i=0;i<ProductList.size();i++)
         {
-            if(ProductList.get(i).getid()==record)
+            if(ProductList.get(i).getId()==record)
             {
                 String pl=ProductList.get(i).toXML();
                 newfile.println(pl);
@@ -234,7 +234,7 @@ public class CPD3314Project {
         newfile.println("<products>");
         for(int i=0;i<ProductList.size();i++)
         {
-            if(ProductList.get(i).getdateAdded().equals(date))
+            if(ProductList.get(i).getDateAdded().equals(date))
             {
                 String pl=ProductList.get(i).toXML();
                 newfile.println(pl);
@@ -251,7 +251,7 @@ public class CPD3314Project {
         newfile.println("<products>");
         for(int i=0;i<ProductList.size();i++)
         {
-            if(ProductList.get(i).getdescription().toLowerCase().indexOf(find.toLowerCase())!=-1 || ProductList.get(i).getname().toLowerCase().indexOf(find.toLowerCase())!=-1 )
+            if(ProductList.get(i).getDescription().toLowerCase().indexOf(find.toLowerCase())!=-1 || ProductList.get(i).getName().toLowerCase().indexOf(find.toLowerCase())!=-1 )
             {
                 String pl=ProductList.get(i).toXML();
                 newfile.println(pl);
