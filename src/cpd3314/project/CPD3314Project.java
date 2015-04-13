@@ -322,7 +322,8 @@ public class CPD3314Project {
     }
 
     /**
-     *
+     * sql() method take two arguments and write into the file with extension
+     * dot SQL
      * @param ProductList
      * @param filename
      * @throws FileNotFoundException
