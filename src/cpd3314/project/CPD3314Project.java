@@ -189,7 +189,8 @@ public class CPD3314Project {
     }
 
     /**
-     *
+     * xml() method take two arguments and write into the file with extension
+     * dot XML
      * @param ProductList
      * @param filename
      * @throws FileNotFoundException
